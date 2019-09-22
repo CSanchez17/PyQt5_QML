@@ -17,7 +17,6 @@ Window {
         //Qt.WindowMaximized
     }
 
-
     property var x_PosClicked: 0
     property var y_PosClicked: 0
     property var messagePosition: "Clicked on: " + x_PosClicked + ", "+ y_PosClicked
@@ -36,6 +35,9 @@ Window {
         onClicked:{
             x_PosClicked = mouseX
             y_PosClicked = mouseY
+
+            // add coordinates
+            myModelQML.sum(5,9)
         }
 
     }
@@ -165,7 +167,20 @@ Window {
     }
 
     Model_QML{
+        id: myModelQML
+        
+    }
 
+    // Here we take the result of sum or subtracting numbers
+    Connections {
+        target: myModelQML
+ 
+        // Sum signal handler
+        onSumResult: {
+            // sum was set through arguments=['sum']
+           // sumResult.text = sum
+            console.log("sum: " + sum)
+        }
     }
 
 }

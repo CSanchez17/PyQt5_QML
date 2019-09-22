@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber, QSlider,
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject
+from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
 import sys
 
@@ -21,6 +21,12 @@ class Model(QObject):
         # Initialise the value of the properties.
         self._name = ''
         self._shoeSize = 0
+        self._clickedList = []
+
+    # Signal sending sum
+    # Necessarily give the name of the argument through arguments=['sum']
+    # Otherwise it will not be possible to get it up in QML
+    sumResult = pyqtSignal(int, arguments=['sum'])
 
     # Define the getter of the 'name' property.  The C++ type of the
     # property is QString which Python will convert to and from a string.
@@ -43,6 +49,21 @@ class Model(QObject):
     @shoeSize.setter
     def shoeSize(self, shoeSize):
         self._shoeSize = shoeSize
+
+    # ------------------------------------------------- #
+    @pyqtProperty(int, int)
+    def clickedList(self):
+        return self._clickedList
+
+    @clickedList.setter
+    def clickedList(self, clickedList):
+        self._clickedList = clickedList
+
+    # Slot for summing two numbers
+    @pyqtSlot(int, int)
+    def sum(self, arg1, arg2):
+        # Sum two arguments and emit a signal
+        self.sumResult.emit(arg1 + arg2)
 
 
 class Example(QWidget):
@@ -118,7 +139,7 @@ def moveMouse():
 
 
 if __name__ == "__main__":
-    #moveMouse()
+    moveMouse()
     runAutoInteraction()
     sys.exit(runQML())
 
