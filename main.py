@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
 import sys
 
-import interaction as inA
+import interaction as actor
 #import Model
 
 ################ my model ################
@@ -65,6 +65,26 @@ class Model(QObject):
         # Sum two arguments and emit a signal
         self.sumResult.emit(arg1 + arg2)
 
+    # Slot populate list
+    @pyqtSlot(int, int, int)
+    def populateMousePosList(self, arg1, arg2, arg3):
+        self._clickedList.append([arg1, arg2, arg3])
+        print(self._clickedList)
+        
+    # Slot reset the position list
+    @pyqtSlot()
+    def resetMousePosList(self):
+        self._clickedList.clear()
+        print(self._clickedList)
+
+    # Slot reset the position list
+    @pyqtSlot(str)
+    def performAction(self, arg1):
+        print("Py: Performing action ...")
+        actor.performMouseMovement(self._clickedList, arg1)
+        print("Py: Action performed.")
+
+    
 
 class Example(QWidget):
 
@@ -130,16 +150,15 @@ def runQML():
 
 def runAutoInteraction():    
     # test 
-    print(inA.add(4,5.5))
+    print(actor.add(4,5.5))
 
 
 def moveMouse():
-    while True:
-        inA.performMouseMovement()
+    #while True:
+    actor.performMouseMovement()
 
 
 if __name__ == "__main__":
-    moveMouse()
     runAutoInteraction()
     sys.exit(runQML())
 

@@ -1,0 +1,23 @@
+References
+
+https://codeloop.org/pyqt5-qml-model-view-programming/
+https://machinekoder.com/speed-up-your-gui-development-with-python-qt-and-qml-live-coding/
+https://www.riverbankcomputing.com/static/Docs/PyQt5/qml.html
+https://pythonspot.com/qml-and-pyqt-creating-a-gui-tutorial/
+http://zetcode.com/gui/qtquick/
+
+: installation
+http://zetcode.com/gui/pyqt5/introduction/
+
+
+: with UI
+https://www.devdungeon.com/content/python3-qt5-pyqt5-tutorial
+
+: just widgets
+https://doc.qt.io/qtforpython/gettingstarted.html#creating-a-simple-application
+
+: How to not shoot yourself in the foot with Python for Qt / PyQt
+https://machinekoder.com/how-to-not-shoot-yourself-in-the-foot-using-python-qt/
+
+: interaction
+https://www.qt.io/blog/2018/05/14/qml-qt-python
