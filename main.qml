@@ -20,7 +20,8 @@ Window {
 
     property var x_PosClicked: 0
     property var y_PosClicked: 0
-    property var messagePosition: "Clicked on: " + x_PosClicked + ", "+ y_PosClicked
+    property var messagePosition: x_PosClicked + ", "+ y_PosClicked
+    property var messageBackground: "Click on record"
 
     //colors
     property var colorGreen: "#18cd4a"
@@ -57,9 +58,18 @@ Window {
 
         id: borderMargin
         anchors.fill : parent
-        color: colorWhite
+        color: "lightgray"
         border.color: colorGreen
         border.width: 5
+        focus: true
+
+        Text {
+            id: txtBackground
+            text: messageBackground
+            anchors.centerIn: parent
+            anchors.fill: parent.fill
+            font.pixelSize: 30
+        }
 
         Rectangle {
             id: messageRectange
@@ -86,6 +96,7 @@ Window {
             width: 50
             height: 20
             color: colorWhite
+            border.color: "black"
             anchors.left: parent.left
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -112,6 +123,7 @@ Window {
             width: 50
             height: 20
             color: colorWhite
+            border.color: "black"
             anchors.left: record.right
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -138,6 +150,7 @@ Window {
             width: 50
             height: 20
             color: colorWhite
+            border.color: "black"
             anchors.left: stop.right
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -162,6 +175,7 @@ Window {
             width: 50
             height: 20
             color: colorWhite
+            border.color: "black"
             anchors.left: reset.right
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -184,6 +198,7 @@ Window {
             width: 50
             height: 20
             color: "lightgreen"
+            border.color: "black"
             anchors.left: save.right
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -199,7 +214,7 @@ Window {
             MouseArea{
                 anchors.fill: parent
                 onPressed:{
-                    if(textIn.text != "AG number"){
+                    if(textIn.text != "  AG number  "){
                         //perform action on python
                         messagePosition = "Performing action"
                         myModelQML.performAction(textIn.text)
@@ -218,6 +233,7 @@ Window {
             width: 50
             height: 20
             color: colorWhite
+            border.color: "black"
             anchors.left: play.right
             anchors.leftMargin: 10
             anchors.bottom: parent.bottom
@@ -263,31 +279,42 @@ Window {
 
         ]
 
+            
+        Keys.onEnterPressed:{
+            myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 2)
+        } 
+
     }
     
-    //TextInput        
-    TextInput {
-        id: textIn
-        width: 80
-        height: 20
-        text: qsTr("AG number")
+    //TextInput  
+    Rectangle{ 
+        width: textIn.width + 5
+        height: textIn.height + 5     
+        border.color: "black"
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.top: parent.top
-        anchors.topMargin: 15
-        font.pixelSize: 12
-        
-    }
+        anchors.topMargin: 15           
+        TextInput {
+            id: textIn
+            anchors.centerIn: parent
+            text: qsTr("  AG number  ")
+            color: "gray"
+            font.pixelSize: 20
+            font.italic: true     
+
+            onTextChanged: {                
+                font.italic = false    
+            }
+        }
+    }  
 
     // Test model
     Model_QML{
         id: myModelQML
         
     }
-    
-    Keys.onEnterPressed:{
-        myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 2)
-    } 
+
 
     // Here we take the result of sum or subtracting numbers
     Connections {
