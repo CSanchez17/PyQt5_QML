@@ -1,5 +1,5 @@
 
-from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber, QDesktopWidget)
+from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber)
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
 from PyQt5.QtGui import QIcon
@@ -165,8 +165,8 @@ def moveMouse():
 
 
 if __name__ == "__main__":
-    #manager.moveWindowToFront("MicrosoftEdge.exe")
+    manager.moveWindowToFront()
     runAutoInteraction()
-    time.sleep(0.3)
+    #time.sleep(0.3)
     sys.exit(runQML())
 

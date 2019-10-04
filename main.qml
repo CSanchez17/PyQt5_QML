@@ -6,7 +6,8 @@ import Model 1.0
 Window {
     id: window
     visible: true
-    color: "#00000000"
+    //color: "#00000000"
+    color: "gray"
     title: qsTr("Auto PO Export")
     width: 550
     height: 200
@@ -29,45 +30,58 @@ Window {
     property var colorWhite: "white"
     property var colorTransparent: "#00000000"
 
-    MouseArea{
-        anchors.fill : parent
-        hoverEnabled: true
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-       // onMouseXChanged: console.log("Mouse: "+ mouseX + ", "+mouseY );
-        onClicked:{
-            x_PosClicked = mouseX
-            y_PosClicked = mouseY
-
-            if (borderMargin.state === 'Recording'){
-
-                // add coordinates
-                //myModelQML.sum(x_PosClicked,y_PosClicked)
-                if (mouse.button === Qt.RightButton){
-                    myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 0)
-                }                    
-                if (mouse.button === Qt.LeftButton){
-                    myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 1)
-                }
-            }
-        }
-    }
-
+ 
     // Buttons
     Rectangle{
-
         id: borderMargin
-        anchors.fill : parent
         color: "lightgray"
         border.color: colorGreen
         border.width: 5
+        //anchors.fill : window
+        width: window.width
+        height: window.height
         focus: true
+
+        MouseArea{
+            anchors.fill : parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            // onMouseXChanged: console.log("Mouse: "+ mouseX + ", "+mouseY );
+            onClicked:{
+                x_PosClicked = mouseX
+                y_PosClicked = mouseY
+
+                if (borderMargin.state === 'Recording'){
+                    // add coordinates
+                    //myModelQML.sum(x_PosClicked,y_PosClicked)
+                    if (mouse.button === Qt.RightButton){
+                        myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 0)
+                    }                    
+                    if (mouse.button === Qt.LeftButton){
+                        myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 1)
+                    }
+                }
+            }
+            onPositionChanged: {
+                x_PosClicked = mouseX
+                y_PosClicked = mouseY
+                console.log("x_PosClicked: " + x_PosClicked + ", y_PosClicked: " + y_PosClicked)
+            }
+        }
+         
+        Keys.onEnterPressed:{
+            //perform action on python
+            //save the coordinates
+            if (textIn.text != "  AG number  "){                    
+                myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 3)
+            }
+        } 
 
         Text {
             id: txtBackground
             text: messageBackground
-            anchors.centerIn: parent
-            anchors.fill: parent.fill
+            anchors.centerIn: borderMargin
             font.pixelSize: 30
         }
 
@@ -276,15 +290,6 @@ Window {
 
         ]
 
-            
-        Keys.onEnterPressed:{
-            //perform action on python
-            //save the coordinates
-            if (textIn.text != "  AG number  "){                    
-                myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 3)
-            }
-        } 
-
     }
     
     //TextInput  
@@ -317,8 +322,7 @@ Window {
     // Test model
     Model_QML{
         id: myModelQML
-        name: textIn.text
-        
+        name: textIn.text        
     }
 
 
