@@ -214,14 +214,11 @@ Window {
             MouseArea{
                 anchors.fill: parent
                 onPressed:{
-                    if(textIn.text != "  AG number  "){
-                        //perform action on python
-                        messagePosition = "Performing action"
-                        myModelQML.performAction(textIn.text)
-                        messagePosition = "Action performed"
+                    if(textIn.text == "  AG number  "){
+                        console.log("Please Provide an AG Number")
                     }
                     else{
-                        console.log("Please Provide an AG Number")
+                        myModelQML.performAction("test")
                     }
 
                 }
@@ -281,7 +278,11 @@ Window {
 
             
         Keys.onEnterPressed:{
-            myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 2)
+            //perform action on python
+            //save the coordinates
+            if (textIn.text != "  AG number  "){                    
+                myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 3)
+            }
         } 
 
     }
@@ -306,12 +307,17 @@ Window {
             onTextChanged: {                
                 font.italic = false    
             }
+            focus: true
+            Keys.onReturnPressed: {
+                focus = false
+            }
         }
     }  
 
     // Test model
     Model_QML{
         id: myModelQML
+        name: textIn.text
         
     }
 

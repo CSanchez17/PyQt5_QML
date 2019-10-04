@@ -39,21 +39,29 @@ def performMouseMovement_v2(mousePosList, arg1):
 
 
 
-def performMouseMovement(mousePosList, arg1):  
-   i_EventID = 3
+def performMouseMovement(mousePosList, textInput = ""):  
+   i_EventID = 2  # column 2 for Event ID
    index = 0
    for i_rows in mousePosList:
+      x_position = i_rows[0]
+      y_position = i_rows[1]
       if(i_rows[i_EventID] == 0) : 
          # left click
-         pa.click(i_rows[0], i_rows[1], duration= 2)
+         pa.click(x_position, y_position, duration= 2)
       
       if(i_rows[i_EventID] == 1) : 
          # right click
-         pa.rightClick(i_rows[0], i_rows[1], duration= 2)         
+         pa.rightClick(x_position, y_position, duration= 2)         
       
       if(i_rows[i_EventID] == 2) :
          # enter pressed
-         pa.moveTo(i_rows[0], i_rows[1], duration= 2) 
+         pa.moveTo(x_position, y_position, duration= 2) 
+         pa.press('enter')         
+      
+      if((i_rows[i_EventID] == 3) and (textInput != "")) :
+         # Text input with enter verification
+         pa.moveTo(x_position, y_position, duration= 2) 
+         pa.write(textInput)
          pa.press('enter')        
       
       index = index + 1

@@ -1,14 +1,14 @@
 
-from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber, QSlider, 
-    QVBoxLayout)
+from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber, QDesktopWidget)
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
-import sys
+import sys, time
 
 import interaction as actor
+import processInfo as manager
 #import Model
 
 ################ my model ################
@@ -70,7 +70,7 @@ class Model(QObject):
     def populateMousePosList(self, arg1, arg2, arg3):
         self._clickedList.append([arg1, arg2, arg3])
         print(self._clickedList)
-        
+
     # Slot reset the position list
     @pyqtSlot()
     def resetMousePosList(self):
@@ -79,9 +79,9 @@ class Model(QObject):
 
     # Slot reset the position list
     @pyqtSlot(str)
-    def performAction(self, arg1):
+    def performAction(self, textInput = 0):
         print("Py: Performing action ...")
-        actor.performMouseMovement(self._clickedList, arg1)
+        actor.performMouseMovement(self._clickedList, self._name)
         print("Py: Action performed.")
 
     
@@ -130,6 +130,12 @@ def runQML():
     # Create an instance of the component.
     model = component.create()
 
+    ##test
+    screen_resolution = app.desktop().screenGeometry()
+    width, height = screen_resolution.width(), screen_resolution.height()
+    print("width: %d" % width) 
+    print("height: %d" % height)
+
     if model is not None:
         # Print the value of the properties.
         print("The person's name is %s." % model.name)
@@ -159,6 +165,8 @@ def moveMouse():
 
 
 if __name__ == "__main__":
+    #manager.moveWindowToFront("MicrosoftEdge.exe")
     runAutoInteraction()
+    time.sleep(0.3)
     sys.exit(runQML())
 
