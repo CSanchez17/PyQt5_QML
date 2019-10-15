@@ -6,8 +6,8 @@ import Model 1.0
 Window {
     id: window
     visible: true
-    //color: "#00000000"
-    color: "gray"
+    color: "#00000000"
+    //color: "gray"
     title: qsTr("Auto PO Export")
     width: 550
     height: 200
@@ -31,7 +31,6 @@ Window {
     property var colorTransparent: "#00000000"
 
  
-    // Buttons
     Rectangle{
         id: borderMargin
         color: "lightgray"
@@ -67,14 +66,14 @@ Window {
                 x_PosClicked = mouseX
                 y_PosClicked = mouseY
                 console.log("x_PosClicked: " + x_PosClicked + ", y_PosClicked: " + y_PosClicked)
-            }
+            }            
         }
          
         Keys.onEnterPressed:{
             //perform action on python
             //save the coordinates
-            if (textIn.text != "  AG number  "){                    
-                myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 3)
+            if (textIn.text != ""){                    
+                myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 2)
             }
         } 
 
@@ -85,190 +84,158 @@ Window {
             font.pixelSize: 30
         }
 
-        Rectangle {
-            id: messageRectange
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
+        Row{
+            id: controls
+            spacing: 2
 
-            width:  150
-            height: 20
-            color: "black"
+            anchors{
+                left: parent.left
+                bottom: parent.bottom
+                leftMargin: 20
+                bottomMargin: 20
+            } 
 
-            Text {
-                id:     element
-                text:   messagePosition
-                color: "white"
-                anchors.centerIn: parent
-                font.pixelSize: 12
-            }
-        }
+            Rectangle {
+                id: record
+                width: 50
+                height: 20
+                color: colorWhite
+                border.color: "black"
 
-        Rectangle {
-            id: record
-            width: 50
-            height: 20
-            color: colorWhite
-            border.color: "black"
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-
-            TextEdit {
-                id: recordText
-                text: qsTr("Record")
-                anchors.centerIn: parent
-                font.pixelSize: 12
-            }
-
-            MouseArea{
-                anchors.fill: parent
-                onPressed:{
-                    window.showMaximized()
-                    borderMargin.state = 'Recording'
+                TextEdit {
+                    id: recordText
+                    text: qsTr("Record")
+                    anchors.centerIn: parent
+                    font.pixelSize: 12
                 }
-            }
-        }
 
-        Rectangle {
-            id: stop
-            width: 50
-            height: 20
-            color: colorWhite
-            border.color: "black"
-            anchors.left: record.right
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-
-            TextEdit {
-                id: stopText
-                text: qsTr("Stop")
-                anchors.centerIn: parent
-                font.pixelSize: 12
-            }
-
-            MouseArea{
-                anchors.fill: parent
-                onPressed:{
-                    window.showNormal()
-                    borderMargin.state = 'Stopped'
-                }
-            }
-        }
-
-        Rectangle {
-            id: reset
-            width: 50
-            height: 20
-            color: colorWhite
-            border.color: "black"
-            anchors.left: stop.right
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-
-            TextEdit {
-                text: qsTr("Reset")
-                anchors.centerIn: parent
-                font.pixelSize: 12
-            }
-
-            MouseArea{
-                anchors.fill: parent
-                onPressed:{
-                    myModelQML.resetMousePosList()
-                }
-            }
-        }
-
-        Rectangle {
-            id: save
-            width: 50
-            height: 20
-            color: colorWhite
-            border.color: "black"
-            anchors.left: reset.right
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-
-            TextEdit {
-                text: qsTr("Save")
-                anchors.centerIn: parent
-                font.pixelSize: 12
-            }
-
-            MouseArea{
-                anchors.fill: parent
-                //onPressed: Qt.quit()
-            }
-        }
-
-        Rectangle {
-            id: play
-            width: 50
-            height: 20
-            color: "lightgreen"
-            border.color: "black"
-            anchors.left: save.right
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-
-            TextEdit {
-                text: qsTr("Play")
-                color: "black"
-                anchors.centerIn: parent
-                font.pixelSize: 12
-            }
-
-            MouseArea{
-                anchors.fill: parent
-                onPressed:{
-                    if(textIn.text == "  AG number  "){
-                        console.log("Please Provide an AG Number")
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed:{
+                        window.showMaximized()
+                        borderMargin.state = 'Recording'
                     }
-                    else{
-                        myModelQML.performAction("test")
-                    }
-
                 }
             }
-        }
 
-        Rectangle {
-            id: close
-            width: 50
-            height: 20
-            color: colorWhite
-            border.color: "black"
-            anchors.left: play.right
-            anchors.leftMargin: 10
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
+            Rectangle {
+                id: stop
+                width: 50
+                height: 20
+                color: colorWhite
+                border.color: "black"
 
-            TextEdit {
-                text: qsTr("Close")
-                anchors.centerIn: parent
-                font.pixelSize: 12
+                TextEdit {
+                    id: stopText
+                    text: qsTr("Stop")
+                    anchors.centerIn: parent
+                    font.pixelSize: 12
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed:{
+                        window.showNormal()
+                        borderMargin.state = 'Stopped'
+                    }
+                }
             }
 
-            MouseArea{
-                anchors.fill: parent
-                onPressed: Qt.quit()
-            }
-        }
+            Rectangle {
+                id: reset
+                width: 50
+                height: 20
+                color: colorWhite
+                border.color: "black"
 
+                TextEdit {
+                    text: qsTr("Reset")
+                    anchors.centerIn: parent
+                    font.pixelSize: 12
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed:{
+                        myModelQML.resetMousePosList()
+                    }
+                }
+            }
+
+            Rectangle {
+                id: save
+                width: 50
+                height: 20
+                color: colorWhite
+                border.color: "black"
+
+                TextEdit {
+                    text: qsTr("Save")
+                    anchors.centerIn: parent
+                    font.pixelSize: 12
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    //onPressed: Qt.quit()
+                }
+            }
+
+            Rectangle {
+                id: play
+                width: 50
+                height: 20
+                color: "lightgreen"
+                border.color: "black"
+
+                TextEdit {
+                    text: qsTr("Play")
+                    color: "black"
+                    anchors.centerIn: parent
+                    font.pixelSize: 12
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed:{
+                        if(textIn.text == ""){
+                            console.log("Please Provide an AG Number")
+                        }
+                        else{
+                            myModelQML.performAction("test")
+                        }
+
+                    }
+                }
+            }
+
+            Rectangle {
+                id: close
+                width: 50
+                height: 20
+                color: colorWhite
+                border.color: "black"
+
+                TextEdit {
+                    text: qsTr("Close")
+                    anchors.centerIn: parent
+                    font.pixelSize: 12
+                }
+
+                MouseArea{
+                    anchors.fill: parent
+                    onPressed: Qt.quit()
+                }
+            }         
+        }
+        
         states:[
             State{
                 name: "Recording"
                 PropertyChanges {
-                    target: borderMargin;
-                    border.color: colorRed
+                    target: borderMargin
                     color: colorTransparent
+                    border.color: colorRed
                 }
                 /*PropertyChanges{
                     target: window
@@ -287,32 +254,56 @@ Window {
                     flags : 
                 }*/
             }
+        ] 
+    
+    }
 
-        ]
+    Rectangle {
+        id: messageRectange
+        width:  150
+        height: 20
+        color: "black"
 
+        anchors{
+            right: parent.right
+            bottom: parent.bottom
+            rightMargin: 20
+            bottomMargin: 20
+        } 
+
+        Text {
+            text:   messagePosition
+            color: "white"
+            anchors.centerIn: parent
+            font.pixelSize: 12
+        }
     }
     
     //TextInput  
     Rectangle{ 
-        width: textIn.width + 5
-        height: textIn.height + 5     
+        width: 200
+        height: 20     
         border.color: "black"
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        anchors.top: parent.top
-        anchors.topMargin: 15           
+        anchors{
+            left: parent.left
+            leftMargin: 20
+            top: parent.top
+            topMargin: 15    
+        }        
         TextInput {
             id: textIn
+            width: 200
             anchors.centerIn: parent
-            text: qsTr("  AG number  ")
+            text: qsTr("")
             color: "gray"
             font.pixelSize: 20
-            font.italic: true     
+            font.italic: true
+            focus: true   
+            cursorVisible: true  
 
-            onTextChanged: {                
-                font.italic = false    
+            onTextChanged: {   
+                color: "black"  
             }
-            focus: true
             Keys.onReturnPressed: {
                 focus = false
             }
@@ -323,8 +314,7 @@ Window {
     Model_QML{
         id: myModelQML
         name: textIn.text        
-    }
-
+    }   
 
     // Here we take the result of sum or subtracting numbers
     Connections {

@@ -2,6 +2,8 @@
 # Python Module interaction
 
 import pyautogui as pa
+import pyHook
+import pythoncom
 
 def add(a, b):
    """This program adds two
@@ -45,6 +47,7 @@ def performMouseMovement(mousePosList, textInput = ""):
    for i_rows in mousePosList:
       x_position = i_rows[0]
       y_position = i_rows[1]
+
       if(i_rows[i_EventID] == 0) : 
          # left click
          pa.click(x_position, y_position, duration= 2)
@@ -56,13 +59,39 @@ def performMouseMovement(mousePosList, textInput = ""):
       if(i_rows[i_EventID] == 2) :
          # enter pressed
          pa.moveTo(x_position, y_position, duration= 2) 
+         pa.click(x_position, y_position, duration= 2)
+         pa.write(textInput)
          pa.press('enter')         
       
-      if((i_rows[i_EventID] == 3) and (textInput != "")) :
-         # Text input with enter verification
-         pa.moveTo(x_position, y_position, duration= 2) 
-         pa.write(textInput)
-         pa.press('enter')        
       
       index = index + 1
             
+def OnMouseEvent(event):
+   # called when mouse events are received
+   msgName =  event.MessageName
+
+   if(msgName == "mouse left down"):
+      print ('MessageName:', event.MessageName)
+      print ('Message:', event.Message)
+      print ('Time:', event.Time)
+      print ('Window:', event.Window)
+      #print ('WindowName:', event.WindowName)
+      print ('Position:' ,event.Position)
+      print ('Wheel: ', event.Wheel)
+      print ('Injected:', event.Injected)
+
+
+   return True
+
+
+def createHookManager():
+   # create a hook manager
+   hm = pyHook.HookManager()
+   # watch for all mouse events
+   hm.MouseAll = OnMouseEvent
+   # set the hook
+   hm.HookMouse()
+   # wait forever
+   pythoncom.PumpMessages()
+
+

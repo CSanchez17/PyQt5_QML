@@ -83,28 +83,7 @@ class Model(QObject):
         print("Py: Performing action ...")
         actor.performMouseMovement(self._clickedList, self._name)
         print("Py: Action performed.")
-
-    
-
-class Example(QWidget):
-
-    def __init__(self):
-        super().__init__()
-        
-        #self.initUI()
-        
-        
-    def initUI(self):      
-        
-        self.setGeometry(300, 300, 250, 150)
-        self.setWindowTitle('Event handler')
-        self.show()
-        
-        
-    def keyPressEvent(self, e):
-        
-        if e.key() == Qt.Key_Escape:
-            self.close()
+  
 
 
 def keyPressEvent(self, e):
@@ -164,9 +143,10 @@ def moveMouse():
     actor.performMouseMovement()
 
 
+
 if __name__ == "__main__":
     manager.moveWindowToFront()
+ #   actor.createHookManager()
     runAutoInteraction()
     #time.sleep(0.3)
-    sys.exit(runQML())
-
+   # sys.exit(runQML())
