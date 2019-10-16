@@ -145,7 +145,8 @@ def moveMouse():
 
 
 if __name__ == "__main__":
-    manager.moveWindowToFront()
+ #   manager.moveWindowToFront()
+    runQML()
  #   actor.createHookManager()
     runAutoInteraction()
     #time.sleep(0.3)

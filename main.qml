@@ -280,16 +280,39 @@ Window {
     }
     
     //TextInput  
-    Rectangle{ 
-        width: 200
-        height: 20     
-        border.color: "black"
+    Column{      "
         anchors{
             left: parent.left
             leftMargin: 20
             top: parent.top
             topMargin: 15    
-        }        
+        }   
+        Label {
+            text: "Assembly Group"
+        }     
+        TextInput {
+            id: textIn
+            width: 200
+            anchors.centerIn: parent
+            text: qsTr("")
+            color: "gray"
+            font.pixelSize: 20
+            font.italic: true
+            focus: true   
+            cursorVisible: true 
+            border.color: "black 
+
+            onTextChanged: {   
+                color: "black"  
+            }
+            Keys.onReturnPressed: {
+                focus = false
+            }
+        }   
+
+        Label {
+            text: "Ulysses PID"
+        }     
         TextInput {
             id: textIn
             width: 200
@@ -301,9 +324,6 @@ Window {
             focus: true   
             cursorVisible: true  
 
-            onTextChanged: {   
-                color: "black"  
-            }
             Keys.onReturnPressed: {
                 focus = false
             }

@@ -7,14 +7,12 @@ sys.coinit_flags = 2
 from pywinauto import application
 from pywinauto.findwindows import WindowAmbiguousError, WindowNotFoundError
 
-#APPS_POOL = ['Notepad', 'Rechner', 'Ulysses']
-
-
 # Select random app from the pull of apps
 def show_rand_app():
     # Init App object
-    app = application.Application().connect(path=r"C:\Ulysses\Client\Ulysses.exe")
-    dlg = app.top_window()
+    #app = application.Application().connect(path=r"C:\Ulysses\Client\Ulysses.exe")
+    app = application.Application().connect(process=16388)
+    dlg = app.top_window().set_focus()
     print(dlg)
     #random_app = random.choice(APPS_POOL)
     #random_app = APPS_POOL[2]
@@ -33,22 +31,10 @@ def show_rand_app():
     #app_dialog.SetFocus()
 
 
-def moveWindowToFront():    
-   # show_rand_app()
-    show_rand_app_v2()
-    #time.sleep(0.3)
-
-
-import random
-import time
-from pywinauto import application
-from pywinauto.findwindows import WindowAmbiguousError, WindowNotFoundError
-
-APPS_POOL = ['Editor', 'Rechner']
-
-
 # Select random app from the pull of apps
 def show_rand_app_v2():
+   # APPS_POOL = ['Ulysses (32 Bit)']
+    APPS_POOL = ['Ulysses v10.1.7 B2804 Sanchez']
     # Init App object
     app = application.Application()
 
@@ -70,6 +56,8 @@ def show_rand_app_v2():
         print('There are too many "%s" windows found' % random_app)
         pass
 
-for i in range(15):
-    show_rand_app_v2()
-    time.sleep(0.3)
+
+def moveWindowToFront():    
+    show_rand_app()
+   # show_rand_app_v2()
+    #time.sleep(0.3)
