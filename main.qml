@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import QtQuick.Controls 2.5
 
 import Model 1.0
 
@@ -83,6 +84,67 @@ Window {
             anchors.centerIn: borderMargin
             font.pixelSize: 30
         }
+
+            //TextInput  
+    Column{      
+        anchors{
+            left: parent.left
+            leftMargin: 20
+            top: parent.top
+            topMargin: 15    
+        }   
+        Rectangle{            
+            border.color: "black"   
+            Label {
+                text: "Assembly Group"
+            }                 
+            TextInput {
+                id: textIn
+                width: 200
+                anchors.centerIn: parent
+                text: qsTr("")
+                color: "gray"
+                font.pixelSize: 20
+                font.italic: true
+                focus: true   
+                cursorVisible: true 
+
+                onTextChanged: {   
+                    color = "black"  
+                }
+
+                Keys.onReturnPressed: {
+                    focus = false
+                }
+            }
+        }  
+        
+        Rectangle{ 
+            border.color: "black" 
+            Label {
+                text: "Ulysses PID"
+            }                 
+            TextInput {
+                width: 200
+                anchors.centerIn: parent
+                text: qsTr("")
+                color: "gray"
+                font.pixelSize: 20
+                font.italic: true
+                focus: true   
+                cursorVisible: true 
+
+                onTextChanged: {   
+                    color = "black"  
+                }
+
+                Keys.onReturnPressed: {
+                    focus = false
+                }
+            }
+        }  
+    }  
+
 
         Row{
             id: controls
@@ -279,57 +341,6 @@ Window {
         }
     }
     
-    //TextInput  
-    Column{      "
-        anchors{
-            left: parent.left
-            leftMargin: 20
-            top: parent.top
-            topMargin: 15    
-        }   
-        Label {
-            text: "Assembly Group"
-        }     
-        TextInput {
-            id: textIn
-            width: 200
-            anchors.centerIn: parent
-            text: qsTr("")
-            color: "gray"
-            font.pixelSize: 20
-            font.italic: true
-            focus: true   
-            cursorVisible: true 
-            border.color: "black 
-
-            onTextChanged: {   
-                color: "black"  
-            }
-            Keys.onReturnPressed: {
-                focus = false
-            }
-        }   
-
-        Label {
-            text: "Ulysses PID"
-        }     
-        TextInput {
-            id: textIn
-            width: 200
-            anchors.centerIn: parent
-            text: qsTr("")
-            color: "gray"
-            font.pixelSize: 20
-            font.italic: true
-            focus: true   
-            cursorVisible: true  
-
-            Keys.onReturnPressed: {
-                focus = false
-            }
-        }
-    }  
-
     // Test model
     Model_QML{
         id: myModelQML
