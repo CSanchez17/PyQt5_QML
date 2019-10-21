@@ -94,6 +94,11 @@ class Model(QObject):
         print("Py: Performing action ...")
         actor.performMouseMovement(self._clickedList, self._name)
         print("Py: Action performed.")
+
+    # Slot get the pid from qml
+    @pyqtSlot(str)
+    def setPID(self, arg1):
+        manager.moveWindowToFront(arg1)
   
     # ------------------------------------------------- #
 
@@ -157,7 +162,6 @@ def moveMouse():
 
 
 if __name__ == "__main__":
-    manager.moveWindowToFront()
     runQML()
  #   actor.createHookManager()
  #   runAutoInteraction()

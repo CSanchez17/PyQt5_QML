@@ -122,7 +122,7 @@ Window {
                 text: "Assembly Group"
             }
             TextInput {
-                id: textIn
+                id: text1
                 width: 200
                 text: qsTr("")
                 color: "gray"
@@ -137,7 +137,7 @@ Window {
 
                 Keys.onReturnPressed: {
                     focus = false
-                    myModelQML.ulyssesPID = textIn.text
+                    myModelQML.ulyssesPID = text1.text
                 }
             }
 
@@ -147,6 +147,7 @@ Window {
                 text: "Ulysses PID"
             }
             TextInput {
+                id: text2
                 width: 200
                 text: qsTr("")
                 selectionColor: "#060606"
@@ -286,7 +287,8 @@ Window {
                             console.log("Please Provide an AG Number")
                         }
                         else{
-                            myModelQML.performAction("test")
+                            //myModelQML.performAction("test")                            
+                            myModelQML.setPID(textIn.text)
                         }
 
                     }
