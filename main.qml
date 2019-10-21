@@ -14,11 +14,11 @@ Window {
     height: 200
 
     //hide min, max, close buttons title
-    flags: {
-        Qt.FramelessWindowHint
-        //Qt.ItemIsDragEnabled
-        //Qt.WindowMaximized
-    }
+//    flags: {
+//        Qt.FramelessWindowHint
+//        //Qt.ItemIsDragEnabled
+//        //Qt.WindowMaximized
+//    }
 
     property var x_PosClicked: 0
     property var y_PosClicked: 0
@@ -31,7 +31,7 @@ Window {
     property var colorWhite: "white"
     property var colorTransparent: "#00000000"
 
- 
+
     Rectangle{
         id: borderMargin
         color: "lightgray"
@@ -41,6 +41,36 @@ Window {
         width: window.width
         height: window.height
         focus: true
+
+        // Background text
+        Text {
+            id: txtBackground
+            text: messageBackground
+            anchors.centerIn: borderMargin
+            font.pixelSize: 30
+        }
+
+        // Message position  Box
+        Rectangle {
+            id: messageRectange
+            width:  150
+            height: 20
+            color: "black"
+
+            anchors{
+                right: parent.right
+                bottom: parent.bottom
+                rightMargin: 20
+                bottomMargin: 20
+            }
+
+            Text {
+                text:   messagePosition
+                color: "white"
+                anchors.centerIn: parent
+                font.pixelSize: 12
+            }
+        }
 
         MouseArea{
             anchors.fill : parent
@@ -57,7 +87,7 @@ Window {
                     //myModelQML.sum(x_PosClicked,y_PosClicked)
                     if (mouse.button === Qt.RightButton){
                         myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 0)
-                    }                    
+                    }
                     if (mouse.button === Qt.LeftButton){
                         myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 1)
                     }
@@ -66,85 +96,77 @@ Window {
             onPositionChanged: {
                 x_PosClicked = mouseX
                 y_PosClicked = mouseY
-                console.log("x_PosClicked: " + x_PosClicked + ", y_PosClicked: " + y_PosClicked)
-            }            
+                //console.log("x_PosClicked: " + x_PosClicked + ", y_PosClicked: " + y_PosClicked)
+            }
         }
-         
+
         Keys.onEnterPressed:{
             //perform action on python
             //save the coordinates
-            if (textIn.text != ""){                    
+            if (textIn.text != ""){
                 myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 2)
             }
-        } 
-
-        Text {
-            id: txtBackground
-            text: messageBackground
-            anchors.centerIn: borderMargin
-            font.pixelSize: 30
         }
 
-            //TextInput  
-    Column{      
-        anchors{
-            left: parent.left
-            leftMargin: 20
-            top: parent.top
-            topMargin: 15    
-        }   
-        Rectangle{            
-            border.color: "black"   
+        //TextInput
+        Column{
+            anchors{
+                left: borderMargin.left
+                leftMargin: 20
+                top: borderMargin.top
+                topMargin: 20
+            }
+            //firs input
             Label {
+                id: label1
                 text: "Assembly Group"
-            }                 
+            }
             TextInput {
                 id: textIn
                 width: 200
-                anchors.centerIn: parent
                 text: qsTr("")
                 color: "gray"
-                font.pixelSize: 20
-                font.italic: true
-                focus: true   
-                cursorVisible: true 
+                font.pixelSize: 15
+                //font.italic: true
+                focus: true
+                cursorVisible: true
 
-                onTextChanged: {   
-                    color = "black"  
+                onTextChanged: {
+                    color = "black"
                 }
 
                 Keys.onReturnPressed: {
                     focus = false
+                    myModelQML.ulyssesPID = textIn.text
                 }
             }
-        }  
-        
-        Rectangle{ 
-            border.color: "black" 
+
+            //second input
             Label {
+                id: label2
                 text: "Ulysses PID"
-            }                 
+            }
             TextInput {
                 width: 200
-                anchors.centerIn: parent
                 text: qsTr("")
-                color: "gray"
-                font.pixelSize: 20
-                font.italic: true
-                focus: true   
-                cursorVisible: true 
+                selectionColor: "#060606"
+                color: "#fbfbfb"
+                font.pixelSize: 15
+                //font.italic: true
+                focus: true
+                cursorVisible: true
 
-                onTextChanged: {   
-                    color = "black"  
+                validator: IntValidator{bottom: 4; top: 99999;}
+
+                onTextChanged: {
+                    color = "black"
                 }
 
                 Keys.onReturnPressed: {
                     focus = false
                 }
             }
-        }  
-    }  
-
+        }
 
         Row{
             id: controls
@@ -155,7 +177,7 @@ Window {
                 bottom: parent.bottom
                 leftMargin: 20
                 bottomMargin: 20
-            } 
+            }
 
             Rectangle {
                 id: record
@@ -174,7 +196,7 @@ Window {
                 MouseArea{
                     anchors.fill: parent
                     onPressed:{
-                        window.showMaximized()
+                        window.showMinimized();
                         borderMargin.state = 'Recording'
                     }
                 }
@@ -288,15 +310,15 @@ Window {
                     anchors.fill: parent
                     onPressed: Qt.quit()
                 }
-            }         
+            }
         }
-        
+
         states:[
             State{
                 name: "Recording"
                 PropertyChanges {
                     target: borderMargin
-                    color: colorTransparent
+                    color: "white"
                     border.color: colorRed
                 }
                 /*PropertyChanges{
@@ -313,34 +335,13 @@ Window {
                 }
                 /*PropertyChanges{
                     target: window
-                    flags : 
+                    flags :
                 }*/
             }
-        ] 
-    
+        ]
+
     }
 
-    Rectangle {
-        id: messageRectange
-        width:  150
-        height: 20
-        color: "black"
-
-        anchors{
-            right: parent.right
-            bottom: parent.bottom
-            rightMargin: 20
-            bottomMargin: 20
-        } 
-
-        Text {
-            text:   messagePosition
-            color: "white"
-            anchors.centerIn: parent
-            font.pixelSize: 12
-        }
-    }
-    
     // Test model
     Model_QML{
         id: myModelQML

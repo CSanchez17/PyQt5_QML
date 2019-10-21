@@ -22,11 +22,21 @@ class Model(QObject):
         self._name = ''
         self._shoeSize = 0
         self._clickedList = []
+        self._ulyssesPID = 0
 
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
     # Otherwise it will not be possible to get it up in QML
-    sumResult = pyqtSignal(int, arguments=['sum'])
+    sumResult = pyqtSignal(int, arguments=['sum'])    
+  
+    # Getter must be declared first and bevore the setter
+    @pyqtProperty('QString')
+    def ulyssesPID(self):
+        return self._ulyssesPID
+
+    @ulyssesPID.setter
+    def ulyssesPID(self, ulyssesPID):
+        self._ulyssesPID = ulyssesPID      
 
     # Define the getter of the 'name' property.  The C++ type of the
     # property is QString which Python will convert to and from a string.
@@ -50,6 +60,7 @@ class Model(QObject):
     def shoeSize(self, shoeSize):
         self._shoeSize = shoeSize
 
+    # ------------------------------------------------- #
     # ------------------------------------------------- #
     @pyqtProperty(int, int)
     def clickedList(self):
@@ -84,6 +95,7 @@ class Model(QObject):
         actor.performMouseMovement(self._clickedList, self._name)
         print("Py: Action performed.")
   
+    # ------------------------------------------------- #
 
 
 def keyPressEvent(self, e):
@@ -145,9 +157,9 @@ def moveMouse():
 
 
 if __name__ == "__main__":
- #   manager.moveWindowToFront()
+    manager.moveWindowToFront()
     runQML()
  #   actor.createHookManager()
-    runAutoInteraction()
+ #   runAutoInteraction()
     #time.sleep(0.3)
    # sys.exit(runQML())
