@@ -13,13 +13,6 @@ Window {
     width: 550
     height: 200
 
-    //hide min, max, close buttons title
-//    flags: {
-//        Qt.FramelessWindowHint
-//        //Qt.ItemIsDragEnabled
-//        //Qt.WindowMaximized
-//    }
-
     property var x_PosClicked: 0
     property var y_PosClicked: 0
     property var messagePosition: x_PosClicked + ", "+ y_PosClicked
@@ -31,7 +24,6 @@ Window {
     property var colorWhite: "white"
     property var colorTransparent: "#00000000"
 
-
     Rectangle{
         id: borderMargin
         color: "lightgray"
@@ -41,6 +33,8 @@ Window {
         width: window.width
         height: window.height
         focus: true
+
+        state: "Stopped"
 
         // Background text
         Text {
@@ -72,9 +66,10 @@ Window {
             }
         }
 
+/*
         MouseArea{
             anchors.fill : parent
-            hoverEnabled: true
+            //hoverEnabled: true
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
             // onMouseXChanged: console.log("Mouse: "+ mouseX + ", "+mouseY );
@@ -100,6 +95,7 @@ Window {
             }
         }
 
+*/
         Keys.onEnterPressed:{
             //perform action on python
             //save the coordinates
@@ -110,6 +106,7 @@ Window {
 
         //TextInput
         Column{
+            id: inputBoxs
             anchors{
                 left: borderMargin.left
                 leftMargin: 20
@@ -137,7 +134,8 @@ Window {
 
                 Keys.onReturnPressed: {
                     focus = false
-                    myModelQML.ulyssesPID = text1.text
+                    myModelQML.nameAG = text1.text
+                    console.log("myModelQML.nameAG: " + myModelQML.nameAG)
                 }
             }
 
@@ -165,6 +163,8 @@ Window {
 
                 Keys.onReturnPressed: {
                     focus = false
+                    myModelQML.ulyssesPID = text2.text
+                    console.log("myModelQML.ulyssesPID: " + myModelQML.ulyssesPID)
                 }
             }
         }
@@ -172,59 +172,56 @@ Window {
         Row{
             id: controls
             spacing: 2
+            focus: true
 
             anchors{
                 left: parent.left
                 bottom: parent.bottom
-                leftMargin: 20
+                leftMargin: 10
                 bottomMargin: 20
-            }
+            }            
 
             Rectangle {
-                id: record
-                width: 50
+                id: stopAndRecord
                 height: 20
+                width: 50
                 color: colorWhite
                 border.color: "black"
+                visible: true
+                focus: true
 
-                TextEdit {
-                    id: recordText
+                Text{
+                    id: stopAndRecordText
                     text: qsTr("Record")
                     anchors.centerIn: parent
                     font.pixelSize: 12
+                    color: "black"
                 }
 
                 MouseArea{
-                    anchors.fill: parent
+                    anchors.fill: stopAndRecord
                     onPressed:{
-                        window.showMinimized();
-                        borderMargin.state = 'Recording'
-                    }
+                        if(borderMargin.state !== 'Stopped'){
+                            borderMargin.state = 'Stopped'
+                            myModelQML.stopRecord()
+                            stopAndRecordText.text= qsTr("Record")                   
+                        }
+                        else{
+                            
+                            if(text1.text !== "" && text2.text !== ""){                     
+                                myModelQML.setPID(text2.text) 
+                                borderMargin.state = 'Recording' 
+                                stopAndRecordText.text= qsTr("Stop") 
+                                myModelQML.recordAction()  
+                            }
+                            else{
+                                console.log("Please Provide the AG Number and the Ulysses PID")
+                            }   
+                        }
+                        console.log("borderMargin.state", borderMargin.state)
+                    }     
                 }
-            }
-
-            Rectangle {
-                id: stop
-                width: 50
-                height: 20
-                color: colorWhite
-                border.color: "black"
-
-                TextEdit {
-                    id: stopText
-                    text: qsTr("Stop")
-                    anchors.centerIn: parent
-                    font.pixelSize: 12
-                }
-
-                MouseArea{
-                    anchors.fill: parent
-                    onPressed:{
-                        window.showNormal()
-                        borderMargin.state = 'Stopped'
-                    }
-                }
-            }
+            }        
 
             Rectangle {
                 id: reset
@@ -233,7 +230,7 @@ Window {
                 color: colorWhite
                 border.color: "black"
 
-                TextEdit {
+                Text {
                     text: qsTr("Reset")
                     anchors.centerIn: parent
                     font.pixelSize: 12
@@ -243,6 +240,7 @@ Window {
                     anchors.fill: parent
                     onPressed:{
                         myModelQML.resetMousePosList()
+                        console.log("reset")
                     }
                 }
             }
@@ -254,7 +252,7 @@ Window {
                 color: colorWhite
                 border.color: "black"
 
-                TextEdit {
+                Text {
                     text: qsTr("Save")
                     anchors.centerIn: parent
                     font.pixelSize: 12
@@ -262,7 +260,9 @@ Window {
 
                 MouseArea{
                     anchors.fill: parent
-                    //onPressed: Qt.quit()
+                    onPressed:{                        
+                        console.log("save")
+                    }
                 }
             }
 
@@ -283,14 +283,14 @@ Window {
                 MouseArea{
                     anchors.fill: parent
                     onPressed:{
-                        if(textIn.text == ""){
-                            console.log("Please Provide an AG Number")
+                        if(text1.text !== "" && text2.text !== ""){                     
+                            myModelQML.setPID(text2.text)
+                            //myModelQML.performAction("test")       
                         }
                         else{
-                            //myModelQML.performAction("test")                            
-                            myModelQML.setPID(textIn.text)
-                        }
-
+                            console.log("Please Provide an AG Number")
+                        }   
+                        console.log("Play")
                     }
                 }
             }
@@ -302,7 +302,7 @@ Window {
                 color: colorWhite
                 border.color: "black"
 
-                TextEdit {
+                Text {
                     text: qsTr("Close")
                     anchors.centerIn: parent
                     font.pixelSize: 12
@@ -310,9 +310,13 @@ Window {
 
                 MouseArea{
                     anchors.fill: parent
-                    onPressed: Qt.quit()
+                    onPressed: {
+                        console.log("close")
+                        Qt.quit()
+                    }
                 }
             }
+
         }
 
         states:[
@@ -323,10 +327,58 @@ Window {
                     color: "white"
                     border.color: colorRed
                 }
-                /*PropertyChanges{
+                PropertyChanges{
+                    target: txtBackground
+                    text : "Recording..."
+                }
+                PropertyChanges{
                     target: window
-                    flags : Qt.FramelessWindowHint
-                }*/
+                    x: 0
+                    y: 0
+                    width: 200
+                    height: 50                   
+                }
+                PropertyChanges{
+                    target: inputBoxs
+                    visible: false
+                }
+                PropertyChanges{
+                    target: reset
+                    visible: false
+                }
+                PropertyChanges{
+                    target: save
+                    visible: false
+                }
+                PropertyChanges{
+                    target: play
+                    visible: false
+                }
+                PropertyChanges{
+                    target: close
+                    visible: false
+                }
+                PropertyChanges{
+                    target: messageRectange
+                    visible: false
+                }
+                PropertyChanges{
+                    target: stopAndRecord                    
+                    border.color: "red"
+                }
+                PropertyChanges{
+                    target: stopAndRecordText
+                    color: "red"
+                }
+                PropertyChanges{
+                    target: controls  
+                    anchors{
+                        left: parent.left
+                        bottom: parent.bottom
+                        leftMargin: 0
+                        bottomMargin: 0
+                    }            
+                }
             },
             State{
                 name: "Stopped"
@@ -335,19 +387,61 @@ Window {
                     border.color: colorGreen
                     color: colorWhite
                 }
-                /*PropertyChanges{
-                    target: window
-                    flags :
-                }*/
+                PropertyChanges{
+                    target: txtBackground
+                    text : "Actions Recorded."
+                }  
+                PropertyChanges{
+                    target: inputBoxs
+                    visible: true
+                }
+                PropertyChanges{
+                    target: reset
+                    visible: true
+                }
+                PropertyChanges{
+                    target: save
+                    visible: true
+                }
+                PropertyChanges{
+                    target: play
+                    visible: true
+                }
+                PropertyChanges{
+                    target: close
+                    visible: true
+                }
+                PropertyChanges{
+                    target: messageRectange
+                    visible: true
+                }
+                PropertyChanges{
+                    target: stopAndRecord
+                    border.color: "black"
+                }
+                PropertyChanges{
+                    target: stopAndRecordText
+                    color: "black"
+                }
+                PropertyChanges{
+                    target: controls  
+                    anchors{
+                        left: parent.left
+                        bottom: parent.bottom
+                        leftMargin: 10
+                        bottomMargin: 20
+                    }            
+                }
             }
         ]
 
-    }
+    }           
 
     // Test model
     Model_QML{
         id: myModelQML
-        name: textIn.text        
+        nameAG: text1.text  
+        ulyssesPID: text2.text        
     }   
 
     // Here we take the result of sum or subtracting numbers

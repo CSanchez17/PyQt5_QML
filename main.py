@@ -19,7 +19,7 @@ class Model(QObject):
         super().__init__(parent)
 
         # Initialise the value of the properties.
-        self._name = ''
+        self._nameAG = ''
         self._shoeSize = 0
         self._clickedList = []
         self._ulyssesPID = 0
@@ -41,13 +41,13 @@ class Model(QObject):
     # Define the getter of the 'name' property.  The C++ type of the
     # property is QString which Python will convert to and from a string.
     @pyqtProperty('QString')
-    def name(self):
-        return self._name
+    def nameAG(self):
+        return self._nameAG
 
     # Define the setter of the 'name' property.
-    @name.setter
-    def name(self, name):
-        self._name = name
+    @nameAG.setter
+    def nameAG(self, nameAG):
+        self._nameAG = nameAG
 
     # Define the getter of the 'shoeSize' property.  The C++ type and
     # Python type of the property is int.
@@ -92,14 +92,31 @@ class Model(QObject):
     @pyqtSlot(str)
     def performAction(self, textInput = 0):
         print("Py: Performing action ...")
-        actor.performMouseMovement(self._clickedList, self._name)
+    #    actor.performMouseMovement(self._clickedList, self._name)
         print("Py: Action performed.")
+
+    # Slot reset the position list
+    @pyqtSlot()
+    def recordAction(self):
+        print("Py: Recording action ...")
+        actor.listenMouseEvents()
+        actor.listenKeyboardEvents()
+
+    # Slot reset the position list
+    @pyqtSlot()
+    def stopRecord(self):
+        print("Py: Stop recording ...")
+        actor.stopListenEvents()
+        actor.stopListenKeyboard()
+        self._clickedList = actor.getTheRecord()
+        print("Clicks: ", len(self._clickedList))
+        print(self._clickedList)
 
     # Slot get the pid from qml
     @pyqtSlot(str)
     def setPID(self, arg1):
         manager.moveWindowToFront(arg1)
-  
+
     # ------------------------------------------------- #
 
 
@@ -134,8 +151,8 @@ def runQML():
 
     if model is not None:
         # Print the value of the properties.
-        print("The person's name is %s." % model.name)
-        print("They wear a size %d shoe." % model.shoeSize)
+        print("The AG name is %s." % model.nameAG)
+        print("The Ulysses PID is %s." % model.ulyssesPID)
     else:
         # Print all errors that occurred.
         for error in component.errors():

@@ -5,6 +5,11 @@ import pyautogui as pa
 import pyHook
 import pythoncom
 
+# create a hook manager
+hm = pyHook.HookManager()
+clickedVectorIn = []
+lastIndex = len(clickedVectorIn)
+
 def add(a, b):
    """This program adds two
    numbers and return the result"""
@@ -65,33 +70,74 @@ def performMouseMovement(mousePosList, textInput = ""):
       
       
       index = index + 1
-            
+
+def OnKeyboardEvent(event):
+
+   print ('MessageName:',event.MessageName)
+   print ('Message:',event.Message)
+   # print 'Time:',event.Time
+   # print 'Window:',event.Window
+   # print 'WindowName:',event.WindowName
+   print ('Ascii:', event.Ascii, chr(event.Ascii))
+   print ('Key:', event.Key)
+   print ('KeyID:', event.KeyID)
+   print ('ScanCode:', event.ScanCode)
+   # print 'Extended:', event.Extended
+   # print 'Injected:', event.Injected
+   print ('Alt', event.Alt)
+   #lastIndex = len(clickedVectorIn)
+   lastIndex = lastIndex - 1
+   clickedVectorIn.append([clickedVectorIn[lastIndex][0], clickedVectorIn[lastIndex][1],"Return"])
+   #print(clickedVectorIn[lastIndex][0], clickedVectorIn[lastIndex][1])
+
+
 def OnMouseEvent(event):
    # called when mouse events are received
    msgName =  event.MessageName
+   (event_x, event_y) = event.Position    
 
    if(msgName == "mouse left down"):
       print ('MessageName:', event.MessageName)
-      print ('Message:', event.Message)
-      print ('Time:', event.Time)
-      print ('Window:', event.Window)
+      print("x: ", event_x)
+      print("y: ", event_y)
+      clickedVectorIn.append([event_x, event_y, "left"])
       #print ('WindowName:', event.WindowName)
       print ('Position:' ,event.Position)
-      print ('Wheel: ', event.Wheel)
-      print ('Injected:', event.Injected)
 
+   if(msgName == "mouse right down"):
+      print ('MessageName:', event.MessageName)
+      print("x: ", event_x)
+      print("y: ", event_y)
+      clickedVectorIn.append([event_x, event_y, "right"])
+      lastIndex =
+      #print ('WindowName:', event.WindowName)
+      print ('Position:' ,event.Position)
 
    return True
 
 
-def createHookManager():
-   # create a hook manager
-   hm = pyHook.HookManager()
+def listenMouseEvents():
    # watch for all mouse events
    hm.MouseAll = OnMouseEvent
    # set the hook
    hm.HookMouse()
    # wait forever
-   pythoncom.PumpMessages()
+   #pythoncom.PumpMessages()
 
+def stopListenEvents():
+   hm.UnhookMouse()
 
+def listenKeyboardEvents():
+   # watch for all mouse events
+   hm.KeyDown = OnKeyboardEvent
+   # set the hook
+   hm.HookKeyboard()
+   # wait forever
+   #pythoncom.PumpMessages()
+
+def stopListenKeyboard():
+   hm.UnhookKeyboard()
+
+def getTheRecord():
+   return clickedVectorIn
+   
