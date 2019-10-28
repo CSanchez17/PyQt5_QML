@@ -4,6 +4,7 @@
 import pyautogui as pa
 import pyHook
 import pythoncom
+import datetime
 
 class Interactor:
    def __init__(self):
@@ -13,6 +14,7 @@ class Interactor:
       self.hm = pyHook.HookManager()
       self.clickedVectorIn = []
       self.lastIndex = len(self.clickedVectorIn)
+      self.interactionSpeed = 0.5
       
    def add(self, a, b):
       """This program adds two
@@ -54,23 +56,28 @@ class Interactor:
       for i_rows in mousePosList:
          x_position = i_rows[0]
          y_position = i_rows[1]
+         print(i_rows)
 
-         if(i_rows[i_EventID] == 0) : 
+         if(i_rows[i_EventID] == "Left") : 
             # left click
-            pa.click(x_position, y_position, duration= 2)
+            pa.leftClick(x_position, y_position, duration= self.interactionSpeed)
          
-         if(i_rows[i_EventID] == 1) : 
+         if(i_rows[i_EventID] == "Right") : 
             # right click
-            pa.rightClick(x_position, y_position, duration= 2)         
+            pa.rightClick(x_position, y_position, duration= self.interactionSpeed)         
          
-         if(i_rows[i_EventID] == 2) :
+         if(i_rows[i_EventID] == "Return") :
             # enter pressed
-            pa.moveTo(x_position, y_position, duration= 2) 
-            pa.click(x_position, y_position, duration= 2)
+            #pa.moveTo(x_position, y_position, duration= 1) 
+            pa.click(x_position, y_position, duration= self.interactionSpeed)
             pa.write(textInput)
             pa.press('enter')     
                   
          index = index + 1
+      
+      currentDT = datetime.datetime.now()      
+      return currentDT.strftime("%d.%m.%Y %H:%M")
+
 
    def OnKeyboardEvent(self, event):
 
@@ -86,12 +93,14 @@ class Interactor:
       # print 'Extended:', event.Extended
       # print 'Injected:', event.Injected
       #print ('Alt', event.Alt)
-      #lastIndex = len(clickedVectorIn)      
-      self.lastIndex = len(self.clickedVectorIn) - 1
-      print("lastIndex: ", self.lastIndex)
-      self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Return"])
-      
-      print("new: ", self.clickedVectorIn[self.lastIndex + 1])
+      #lastIndex = len(clickedVectorIn)  
+      if(event.Key == "Return"):    
+         self.lastIndex = len(self.clickedVectorIn) - 1
+         print("lastIndex: ", self.lastIndex)
+         self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Return"])
+         
+         print("new: ", self.clickedVectorIn[self.lastIndex + 1])
+
       #print(clickedVectorIn[lastIndex][0], clickedVectorIn[lastIndex][1])
       return True
 
@@ -105,7 +114,7 @@ class Interactor:
          print ('MessageName:', event.MessageName)
          print("x: ", event_x)
          print("y: ", event_y)
-         self.clickedVectorIn.append([event_x, event_y, "left"])   
+         self.clickedVectorIn.append([event_x, event_y, "Left"])   
          #print ('WindowName:', event.WindowName)
          print ('Position:' ,event.Position)
 
@@ -113,7 +122,7 @@ class Interactor:
          print ('MessageName:', event.MessageName)
          print("x: ", event_x)
          print("y: ", event_y)
-         self.clickedVectorIn.append([event_x, event_y, "right"])
+         self.clickedVectorIn.append([event_x, event_y, "Right"])
          #print ('WindowName:', event.WindowName)
          print ('Position:' ,event.Position)
 

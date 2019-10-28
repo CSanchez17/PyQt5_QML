@@ -24,6 +24,7 @@ class Model(QObject):
         self._clickedList = []
         self._ulyssesPID = 0
         self.intac = interaction.Interactor()
+        self._lastPerformDate = ""
 
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
@@ -37,10 +38,19 @@ class Model(QObject):
 
     @ulyssesPID.setter
     def ulyssesPID(self, ulyssesPID):
-        self._ulyssesPID = ulyssesPID      
+        self._ulyssesPID = ulyssesPID    
 
-    # Define the getter of the 'name' property.  The C++ type of the
-    # property is QString which Python will convert to and from a string.
+
+    @pyqtProperty('QString')
+    def lastPerformDate(self):
+        return self._lastPerformDate
+
+    # Define the setter of the 'name' property.
+    @lastPerformDate.setter
+    def lastPerformDate(self, lastPerformDate):
+        self._lastPerformDate = lastPerformDate
+
+    #--------------
     @pyqtProperty('QString')
     def nameAG(self):
         return self._nameAG
@@ -87,13 +97,15 @@ class Model(QObject):
     @pyqtSlot()
     def resetMousePosList(self):
         self._clickedList.clear()
+        self.intac.clickedVectorIn.clear()
+        print("clicked vector reseted")
         print(self._clickedList)
 
     # Slot reset the position list
     @pyqtSlot(str)
     def performAction(self, textInput = 0):
         print("Py: Performing action ...")
-    #    actor.performMouseMovement(self._clickedList, self._name)
+        self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG)
         print("Py: Action performed.")
 
     # Slot reset the position list

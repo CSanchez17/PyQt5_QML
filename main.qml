@@ -16,7 +16,7 @@ Window {
     property var x_PosClicked: 0
     property var y_PosClicked: 0
     property var messagePosition: x_PosClicked + ", "+ y_PosClicked
-    property var messageBackground: "Click on record"
+    property var messageBackground: "No actions recorded."
 
     //colors
     property var colorGreen: "#18cd4a"
@@ -34,14 +34,17 @@ Window {
         height: window.height
         focus: true
 
-        state: "Stopped"
+        state: ""
 
         // Background text
         Text {
             id: txtBackground
             text: messageBackground
-            anchors.centerIn: borderMargin
+            anchors.horizontalCenter: borderMargin.horizontalCenter
+            anchors.top: inputBoxs.bottom
+            anchors.topMargin : 10
             font.pixelSize: 30
+            wrapMode: Text.WordWrap
         }
 
         // Message position  Box
@@ -148,18 +151,17 @@ Window {
                 id: text2
                 width: 200
                 text: qsTr("")
-                selectionColor: "#060606"
-                color: "#fbfbfb"
+                color: "gray"
                 font.pixelSize: 15
                 //font.italic: true
                 focus: true
                 cursorVisible: true
 
-                validator: IntValidator{bottom: 4; top: 99999;}
-
                 onTextChanged: {
                     color = "black"
                 }
+
+                validator: IntValidator{bottom: 4; top: 99999;}
 
                 Keys.onReturnPressed: {
                     focus = false
@@ -201,7 +203,7 @@ Window {
                 MouseArea{
                     anchors.fill: stopAndRecord
                     onPressed:{
-                        if(borderMargin.state !== 'Stopped'){
+                        if(borderMargin.state !== 'Stopped' && borderMargin.state !== ''){
                             borderMargin.state = 'Stopped'
                             myModelQML.stopRecord()
                             stopAndRecordText.text= qsTr("Record")                   
@@ -215,8 +217,9 @@ Window {
                                 myModelQML.recordAction()  
                             }
                             else{
-                                console.log("Please Provide the AG Number and the Ulysses PID")
-                            }   
+                                txtBackground.font.pixelSize = 20
+                                txtBackground.text = "Please provide a valid AG number and Ulysses PID"
+                            }  
                         }
                         console.log("borderMargin.state", borderMargin.state)
                     }     
@@ -282,15 +285,17 @@ Window {
 
                 MouseArea{
                     anchors.fill: parent
-                    onPressed:{
+                    onPressed:{   
+                        console.log("Play clicked")
                         if(text1.text !== "" && text2.text !== ""){                     
                             myModelQML.setPID(text2.text)
-                            //myModelQML.performAction("test")       
+                            var perfTime = myModelQML.performAction("test")  
+                            txtBackground.text = "Action performed " + myModelQML.lastPerformDate     
                         }
                         else{
-                            console.log("Please Provide an AG Number")
-                        }   
-                        console.log("Play")
+                            txtBackground.font.pixelSize = 20
+                            txtBackground.text = "Please provide a valid AG number and Ulysses PID"
+                        }
                     }
                 }
             }
