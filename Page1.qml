@@ -7,7 +7,7 @@ Page {
 
     Rectangle{
         id: borderMargin
-        color: "lightgray"
+        color: "white"
         border.color: colorGreen
         border.width: 5
         anchors.fill : parent
@@ -213,16 +213,6 @@ Page {
                     console.log("borderMargin.state", borderMargin.state)
                 }
             }
-            
-            ToolButton {
-                text: qsTr("Reset")        
-                id: reset
-
-                onPressed:{                
-                    myModelQML.resetMousePosList()
-                    console.log("reset")
-                }
-            }
 
             ToolButton {
                 text: qsTr("Start")
@@ -239,6 +229,25 @@ Page {
                         txtBackground.font.pixelSize = 20
                         txtBackground.text = "Please provide a valid AG number and Ulysses PID"
                     }
+                }
+            }
+            
+            ToolButton {
+                text: qsTr("Reset")        
+                id: reset
+
+                onPressed:{                
+                    myModelQML.resetMousePosList()
+                    console.log("reset")
+                }
+            }
+
+            ToolButton {
+                text: qsTr("Save")
+                id: save
+
+                onPressed: {
+                    console.log("save")
                 }
             }
 

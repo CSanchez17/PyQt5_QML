@@ -109,6 +109,7 @@ class Interactor:
       # called when mouse events are received
       msgName =  event.MessageName
       (event_x, event_y) = event.Position  
+      print("mouse: ", event.Position )
 
       if(msgName == "mouse left down"):
          print ('MessageName:', event.MessageName)
