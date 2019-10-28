@@ -93,6 +93,7 @@ class Interactor:
       
       print("new: ", self.clickedVectorIn[self.lastIndex + 1])
       #print(clickedVectorIn[lastIndex][0], clickedVectorIn[lastIndex][1])
+      return True
 
 
    def OnMouseEvent(self, event):
