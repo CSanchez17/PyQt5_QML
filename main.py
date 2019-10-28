@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
 import sys, time
 
-import interaction as actor
+import interaction
 import processInfo as manager
 #import Model
 
@@ -23,6 +23,7 @@ class Model(QObject):
         self._shoeSize = 0
         self._clickedList = []
         self._ulyssesPID = 0
+        self.intac = interaction.Interactor()
 
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
@@ -99,16 +100,16 @@ class Model(QObject):
     @pyqtSlot()
     def recordAction(self):
         print("Py: Recording action ...")
-        actor.listenMouseEvents()
-        actor.listenKeyboardEvents()
+        self.intac.listenMouseEvents()
+        self.intac.listenKeyboardEvents()
 
     # Slot reset the position list
     @pyqtSlot()
     def stopRecord(self):
         print("Py: Stop recording ...")
-        actor.stopListenEvents()
-        actor.stopListenKeyboard()
-        self._clickedList = actor.getTheRecord()
+        self.intac.stopListenEvents()
+        self.intac.stopListenKeyboard()
+        self._clickedList = self.intac.getTheRecord()
         print("Clicks: ", len(self._clickedList))
         print(self._clickedList)
 
@@ -124,6 +125,16 @@ def keyPressEvent(self, e):
     
     if e.key() == Qt.Key_Escape:
         self.close()
+
+#
+#def runAutoInteraction():    
+#    # test 
+#    print(actor.add(4,5.5))
+#
+#
+#def moveMouse():
+#    #while True:
+#    actor.performMouseMovement()
 
 def runQML():
     app =QApplication(sys.argv)
@@ -165,17 +176,6 @@ def runQML():
         return -1
 
     return app.exec_()
-
-
-def runAutoInteraction():    
-    # test 
-    print(actor.add(4,5.5))
-
-
-def moveMouse():
-    #while True:
-    actor.performMouseMovement()
-
 
 
 if __name__ == "__main__":
