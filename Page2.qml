@@ -3,9 +3,10 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls 2.5
 
 Page {
+    id: page2
     property var inInterval: 1000 
     property date currentDate: new Date()
-    property var dateString  
+    property var dateString  : Qt.formatDate(currentDate,"ddd d MMM yyyy")
 
     Button{
         id: calenderButton
@@ -41,11 +42,11 @@ Page {
 
         onDoubleClicked:{
             visible = false
-            calenderButton.focus = false
-            focus = false
+            page2.focus = true
             currentDate = calendar.selectedDate
             dateString = Qt.formatDate(currentDate,"ddd d MMM yyyy")
             console.log(Qt.formatDate(currentDate,"ddd d MMM yyyy")) 
+            
         }
     }
 
