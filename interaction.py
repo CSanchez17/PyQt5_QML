@@ -75,7 +75,8 @@ class Interactor:
                   
          index = index + 1
       
-      currentDT = datetime.datetime.now()      
+      currentDT = datetime.datetime.now()    
+      print(currentDT)
       return currentDT.strftime("%d.%m.%Y %H:%M")
 
 

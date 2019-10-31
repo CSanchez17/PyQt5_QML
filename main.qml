@@ -12,6 +12,11 @@ ApplicationWindow {
     width: 550
     height: 300
 
+    maximumHeight: 300
+    minimumHeight: 300
+    maximumWidth: 550
+    minimumWidth: 550
+
     property var x_PosClicked: 0
     property var y_PosClicked: 0
     property var messagePosition: x_PosClicked + ", "+ y_PosClicked
