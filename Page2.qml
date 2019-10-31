@@ -6,8 +6,35 @@ Page {
     id: page2
     property var inInterval: 1000
     property date currentDate: new Date()
+    property date currentTime: new Date()
     property var dateString  : Qt.formatDate(currentDate,"ddd d MMM yyyy")
     property var pointSize: 15
+
+    property var createdDate : new Date()
+
+    function updateCurrentTime(){
+        currentTime = new Date();        
+    }
+
+    function createDate(){
+        var locale = Qt.locale();
+        var timeString = "";
+        if(tumblerHour.currentIndex < 10) {                
+            if(tumblerMin.currentIndex < 10) {
+                timeString = "0" + tumblerHour.currentIndex + " " + "0" + tumblerMin.currentIndex + "00";
+            }
+            else{                
+                timeString = "0" + tumblerHour.currentIndex + " " + tumblerMin.currentIndex + "00";   
+            }
+        }
+        else{                  
+            timeString = tumblerHour.currentIndex + " " + tumblerMin.currentIndex + "00";
+        } 
+        var dateTimeStringToConvert = dateString + timeString;
+
+        print(Date.fromLocaleString(locale, dateTimeStringToConvert, "ddd d MMM yyyy hh mm ss"));
+        
+    }
 
 
     Timer{
@@ -30,7 +57,6 @@ Page {
                 currentDate = calendar.selectedDate
                 dateString = Qt.formatDate(currentDate,"ddd d MMM yyyy")
                 console.log(Qt.formatDate(currentDate,"ddd d MMM yyyy"))
-
             }
         }
 
@@ -64,6 +90,7 @@ Page {
 
             Label {
                 id: label1
+                height: 30
                 text: qsTr("Repeat")
                 verticalAlignment: Text.AlignVCenter
                 font.pointSize: pointSize
@@ -145,19 +172,27 @@ Page {
                 Tumbler {
                     id: tumblerHour
                     width: 25
-                    height: 30
+                    height: 40
                     wheelEnabled: true
-                    visibleItemCount: 3
+                    visibleItemCount: 4
                     model: 23
                 }
 
                 Tumbler {
                     id: tumblerMin
                     width: 25
-                    height: 30
+                    height: 40
                     wheelEnabled: true
-                    visibleItemCount: 3
+                    visibleItemCount: 4
                     model: 59
+                }
+
+                Button{
+                    id: apply
+                    text: "Apply"
+                    onPressed:{
+                        createDate()
+                    }
                 }
             }
 
