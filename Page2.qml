@@ -21,17 +21,18 @@ Page {
         var timeString = "";
         if(tumblerHour.currentIndex < 10) {                
             if(tumblerMin.currentIndex < 10) {
-                timeString = "0" + tumblerHour.currentIndex + " " + "0" + tumblerMin.currentIndex + "00";
+                timeString = "0" + tumblerHour.currentIndex + " " + "0" + tumblerMin.currentIndex + " 00";
             }
             else{                
-                timeString = "0" + tumblerHour.currentIndex + " " + tumblerMin.currentIndex + "00";   
+                timeString = "0" + tumblerHour.currentIndex + " " + tumblerMin.currentIndex + " 00";   
             }
         }
         else{                  
-            timeString = tumblerHour.currentIndex + " " + tumblerMin.currentIndex + "00";
+            timeString = tumblerHour.currentIndex + " " + tumblerMin.currentIndex + " 00";
         } 
-        var dateTimeStringToConvert = dateString + timeString;
+        var dateTimeStringToConvert = dateString +" " + timeString;
 
+        print(dateTimeStringToConvert)
         print(Date.fromLocaleString(locale, dateTimeStringToConvert, "ddd d MMM yyyy hh mm ss"));
         
     }
