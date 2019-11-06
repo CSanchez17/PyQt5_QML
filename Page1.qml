@@ -1,7 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Controls.Styles 1.4
-import Model 1.0
 
 Page {
 
@@ -32,7 +31,7 @@ Page {
             //perform action on python
             //save the coordinates
             if (textIn.text != ""){
-                myModelQML.populateMousePosList(x_PosClicked,y_PosClicked, 2)
+                pyModel.populateMousePosList(x_PosClicked,y_PosClicked, 2)
             }
         }
 
@@ -62,12 +61,13 @@ Page {
 
                 onTextChanged: {
                     color = "black"
+                    pyModel.nameAG = text1.text
                 }
 
                 Keys.onReturnPressed: {
                     focus = false
-                    myModelQML.nameAG = text1.text
-                    console.log("myModelQML.nameAG: " + myModelQML.nameAG)
+                    pyModel.nameAG = text1.text
+                    console.log("pyModel.nameAG: " + pyModel.nameAG)
                 }
             }
 
@@ -88,18 +88,18 @@ Page {
 
                 onTextChanged: {
                     color = "black"
+                    pyModel.ulyssesPID = text2.text
                 }
 
                 validator: IntValidator{bottom: 4; top: 99999;}
 
                 Keys.onReturnPressed: {
                     focus = false
-                    myModelQML.ulyssesPID = text2.text
-                    console.log("myModelQML.ulyssesPID: " + myModelQML.ulyssesPID)
+                    pyModel.ulyssesPID = text2.text
+                    console.log("pyModel.ulyssesPID: " + pyModel.ulyssesPID)
                 }
             }
         }   
-
         
         states:[
             State{
@@ -194,16 +194,17 @@ Page {
                 onPressed:{            
                     if(borderMargin.state !== 'Stopped' && borderMargin.state !== ''){
                         borderMargin.state = 'Stopped'
-                        myModelQML.stopRecord()
+                        pyModel.stopRecord()
                         stopAndRecord.text= qsTr("Record")                   
                     }
                     else{
                         
                         if(text1.text !== "" && text2.text !== ""){                     
-                            myModelQML.setPID(text2.text) 
+                            pyModel.setPID(text2.text)                             
                             borderMargin.state = 'Recording' 
+                            window.recordStateRequired()
                             stopAndRecord.text= qsTr("Stop") 
-                            myModelQML.recordAction()  
+                            pyModel.recordAction()  
                         }
                         else{
                             txtBackground.font.pixelSize = 20
@@ -221,9 +222,9 @@ Page {
                 onPressed:{   
                     console.log("Start clicked")
                     if(text1.text !== "" && text2.text !== ""){                     
-                        myModelQML.setPID(text2.text)
-                        var perfTime = myModelQML.performAction("test")  
-                        txtBackground.text = "Action performed " + myModelQML.lastPerformDate     
+                        pyModel.setPID(text2.text)
+                        var perfTime = pyModel.performAction("test")  
+                        txtBackground.text = "Action performed " + pyModel.lastPerformDate     
                     }
                     else{
                         txtBackground.font.pixelSize = 20
@@ -237,7 +238,7 @@ Page {
                 id: reset
 
                 onPressed:{                
-                    myModelQML.resetMousePosList()
+                    pyModel.resetMousePosList()
                     console.log("reset")
                 }
             }
@@ -269,22 +270,5 @@ Page {
         anchors.centerIn: parent
     }
 */
-    // Test model
-    Model_QML{
-        id: myModelQML
-        nameAG: text1.text  
-        ulyssesPID: text2.text        
-    }    
 
-    // Here we take the result of sum or subtracting numbers
-    Connections {
-        target: myModelQML
- 
-        // Sum signal handler
-        onSumResult: {
-            // sum was set through arguments=['sum']
-           // sumResult.text = sum
-            console.log("sum: " + sum)
-        }
-    } 
 }

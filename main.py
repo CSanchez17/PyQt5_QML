@@ -9,6 +9,7 @@ import sys, time
 
 import interaction
 import processInfo as manager
+import timer
 #import Model
 
 ################ my model ################
@@ -130,6 +131,12 @@ class Model(QObject):
     def setPID(self, arg1):
         manager.moveWindowToFront(arg1)
 
+        
+    # Slot get the set the selected date
+    @pyqtSlot(str, str)
+    def setDate(self, arg1, arg2):
+        timer.setTheTimer(arg1, arg2)
+
     # ------------------------------------------------- #
 
 
@@ -137,16 +144,6 @@ def keyPressEvent(self, e):
     
     if e.key() == Qt.Key_Escape:
         self.close()
-
-#
-#def runAutoInteraction():    
-#    # test 
-#    print(actor.add(4,5.5))
-#
-#
-#def moveMouse():
-#    #while True:
-#    actor.performMouseMovement()
 
 def runQML():
     app =QApplication(sys.argv)

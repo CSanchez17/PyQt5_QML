@@ -21,20 +21,28 @@ Page {
         var timeString = "";
         if(tumblerHour.currentIndex < 10) {                
             if(tumblerMin.currentIndex < 10) {
-                timeString = "0" + tumblerHour.currentIndex + " " + "0" + tumblerMin.currentIndex + " 00";
+                timeString = "0" + tumblerHour.currentIndex + " 0" + tumblerMin.currentIndex + " 00";
             }
             else{                
                 timeString = "0" + tumblerHour.currentIndex + " " + tumblerMin.currentIndex + " 00";   
             }
         }
-        else{                  
-            timeString = tumblerHour.currentIndex + " " + tumblerMin.currentIndex + " 00";
+        else{                 
+            if(tumblerMin.currentIndex < 10) {
+                timeString = tumblerHour.currentIndex + " 0" + tumblerMin.currentIndex + " 00";
+            }
+            else{                
+                timeString = tumblerHour.currentIndex + " " + tumblerMin.currentIndex + " 00";   
+            }                 
         } 
         var dateTimeStringToConvert = dateString +" " + timeString;
 
         print(dateTimeStringToConvert)
-        print(Date.fromLocaleString(locale, dateTimeStringToConvert, "ddd d MMM yyyy hh mm ss"));
+        print(Date.fromLocaleString(locale, dateTimeStringToConvert, "d MM yyyy hh mm ss"));
         
+        //send date to Python
+        pyModel.setDate(dateTimeStringToConvert, "test")
+
     }
 
 
@@ -56,8 +64,9 @@ Page {
 
             onDoubleClicked:{
                 currentDate = calendar.selectedDate
-                dateString = Qt.formatDate(currentDate,"ddd d MMM yyyy")
-                console.log(Qt.formatDate(currentDate,"ddd d MMM yyyy"))
+                dateString = Qt.formatDate(currentDate,"d MM yyyy")
+                //dateString = Qt.formatDate(currentDate,"ddd d MMM yyyy")
+                console.log(dateString)
             }
         }
 
@@ -82,7 +91,7 @@ Page {
                 Text{
                     id: selectedDate
                     height: 30
-                    text: dateString
+                    text: Qt.formatDate(calendar.selectedDate,"ddd d MM yyyy")
                     verticalAlignment: Text.AlignBottom
                     font.pointSize: pointSize
                     color: "green"
@@ -173,18 +182,20 @@ Page {
                 Tumbler {
                     id: tumblerHour
                     width: 25
-                    height: 40
+                    height: 52
                     wheelEnabled: true
                     visibleItemCount: 4
+                    focusPolicy: Qt.WheelFocus
                     model: 23
                 }
 
                 Tumbler {
                     id: tumblerMin
                     width: 25
-                    height: 40
+                    height: 52
                     wheelEnabled: true
                     visibleItemCount: 4
+                    focusPolicy: Qt.WheelFocus
                     model: 59
                 }
 
