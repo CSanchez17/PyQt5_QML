@@ -1,11 +1,14 @@
 
+
+from PyQt5 import QtCore, QtGui, QtWidgets, QtQml
+
 from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber)
 
 from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
-from PyQt5.QtGui import QIcon
+#from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
-import sys, time
+import sys, time, json
 
 import interaction
 import processInfo as manager
@@ -155,6 +158,20 @@ class Model(QObject):
     @pyqtSlot()
     def startTheTimer(self):
         self._timer.waitForTheTime()
+
+    @pyqtSlot()
+    def saveToJson(self):
+        data = {}
+        data['clicks'] = self._clickedList
+        with open('data.txt', 'w') as outfile:
+            json.dump(data,outfile)
+
+    @pyqtSlot()
+    def readFromJson(self):
+        with open('data.txt') as json_file:
+            data = json.load(json_file)
+            for p in data['clicks']:
+                print(p)
 
     # ------------------------------------------------- #
 

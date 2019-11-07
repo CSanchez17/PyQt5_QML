@@ -5,6 +5,8 @@ import pyautogui as pa
 import pyHook
 import pythoncom
 import datetime
+import time
+
 
 class Interactor:
    def __init__(self):
@@ -14,41 +16,13 @@ class Interactor:
       self.hm = pyHook.HookManager()
       self.clickedVectorIn = []
       self.lastIndex = len(self.clickedVectorIn)
-      self.interactionSpeed = 1
+      self.interactionSpeed = 2
       
    def add(self, a, b):
       """This program adds two
       numbers and return the result"""
       result = a + b
       return result
-
-   def performMouseMovement_v1(self, mousePosList, arg1):
-      #pa.moveTo(100,500, duration = 5)   # duration 5 sec
-      #pa.moveRel(0,10, duration = 5)
-      #pa.dragTo(100,150, duration = 5)
-      #pa.dragRel(0,10, duration = 5)
-      #print(mousePosList)
-      for row in mousePosList:
-         pa.moveTo(row[0],row[1], duration = 2) 
-         pa.click(row[0],row[1])
-         pa.typewrite(arg1) 
-         pa.press('enter')
-         
-         #print(row)
-         #for elem in row:
-            #print(elem, end=' ') prints: x1 y1   
-         #print()
-
-   def performMouseMovement_v2(self, mousePosList, arg1):
-      pa.moveTo(mousePosList[0][0], mousePosList[0][1], duration = 1) 
-      pa.click(mousePosList[0][0], mousePosList[0][1])
-      pa.typewrite(arg1) 
-      pa.press('enter')
-      pa.moveTo(mousePosList[1][0], mousePosList[1][1], duration = 6)
-      pa.rightClick(mousePosList[1][0], mousePosList[1][1])
-      pa.click(mousePosList[1][0] + 20, mousePosList[1][1] - (150), duration=2)
-
-
 
    def performMouseMovement(self, mousePosList, textInput = ""):  
       i_EventID = 2  # column 2 for Event ID
@@ -58,7 +32,7 @@ class Interactor:
          y_position = i_rows[1]
          print(i_rows)
 
-         pa.moveTo(x_position, y_position)
+         #pa.moveTo(x_position, y_position)
          if(i_rows[i_EventID] == "Left") : 
             # left click
             pa.leftClick(x_position, y_position)
@@ -72,13 +46,19 @@ class Interactor:
             #pa.moveTo(x_position, y_position, duration= 1) 
             pa.click(x_position, y_position)
             pa.write(textInput)
-            pa.press('enter')     
+            pa.press('enter')
+         
+         if(i_rows[i_EventID] == "Space"):
+            self.pause()
                   
          index = index + 1
       
       currentDT = datetime.datetime.now()    
       print(currentDT)
       return currentDT.strftime("%d.%m.%Y %H:%M")
+
+   def pause(self):
+      time.sleep(6)   #4 seconds
 
 
    def OnKeyboardEvent(self, event):
@@ -98,10 +78,11 @@ class Interactor:
       #lastIndex = len(clickedVectorIn)  
       if(event.Key == "Return"):    
          self.lastIndex = len(self.clickedVectorIn) - 1
-         print("lastIndex: ", self.lastIndex)
          self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Return"])
-         
-         print("new: ", self.clickedVectorIn[self.lastIndex + 1])
+      if(event.Key == "Space"): 
+         self.lastIndex = len(self.clickedVectorIn) - 1
+         self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Space"])
+
 
       #print(clickedVectorIn[lastIndex][0], clickedVectorIn[lastIndex][1])
       return True
@@ -154,6 +135,8 @@ class Interactor:
       self.hm.UnhookKeyboard()
 
    def getTheRecord(self):
+      print("len: ", len(self.clickedVectorIn))
+      self.clickedVectorIn.pop(len(self.clickedVectorIn) - 1)
       return self.clickedVectorIn
       
 

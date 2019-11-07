@@ -251,6 +251,7 @@ Page {
 
                 onPressed: {
                     console.log("save")
+                    pyModel.saveToJson()
                 }
             }
 
