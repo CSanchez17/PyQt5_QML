@@ -47,6 +47,7 @@ class Interactor:
             pa.click(x_position, y_position)
             pa.write(textInput)
             pa.press('enter')
+            self.pause()
          
          if(i_rows[i_EventID] == "Space"):
             self.pause()
