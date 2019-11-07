@@ -25,13 +25,24 @@ class Model(QObject):
         self._clickedList = []
         self._ulyssesPID = 0
         self.intac = interaction.Interactor()
+        self._timer = timer.Timer()
+        self._currTime = timer.getTheCurrentTime()
         self._lastPerformDate = ""
 
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
     # Otherwise it will not be possible to get it up in QML
-    sumResult = pyqtSignal(int, arguments=['sum'])    
+    sumResult = pyqtSignal(int, arguments=['sum'])      
   
+    @pyqtProperty('QString')
+    def currTime(self):
+        self._currTime = timer.getTheCurrentTime()
+        return self._currTime
+
+    @currTime.setter
+    def currTime(self, currTime):
+        self._currTime = currTime    
+
     # Getter must be declared first and bevore the setter
     @pyqtProperty('QString')
     def ulyssesPID(self):
@@ -135,7 +146,15 @@ class Model(QObject):
     # Slot get the set the selected date
     @pyqtSlot(str, str)
     def setDate(self, arg1, arg2):
-        timer.setTheTimer(arg1, arg2)
+        self._timer.setTheTimer(arg1, arg2)
+
+    @pyqtSlot()
+    def updateCurrentTime(self):
+        self.currTime = timer.getTheCurrentTime
+
+    @pyqtSlot()
+    def startTheTimer(self):
+        self._timer.waitForTheTime()
 
     # ------------------------------------------------- #
 

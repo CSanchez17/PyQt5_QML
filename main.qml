@@ -13,16 +13,17 @@ ApplicationWindow {
     width: 600
     height: 330
 
-    maximumHeight: 330
-    minimumHeight: 60
-    maximumWidth: 600
+    maximumHeight: 340
+    minimumHeight: 70
+    maximumWidth: 560
     minimumWidth: 150
 
     property var x_PosClicked: 0
     property var y_PosClicked: 0
     property var messagePosition: x_PosClicked + ", "+ y_PosClicked
-    property var messageBackground: "No actions recorded."
 
+    property var messageBackground: "No actions recorded."
+ 
     //colors
     property var colorGreen: "#18cd4a"
     property var colorRed: "#f71414"
@@ -35,6 +36,11 @@ ApplicationWindow {
         myStateGroup.state = "Recording";
         print("onRecordStateRequired");
         //window.myStateGroup.state = "Recording"
+    }
+
+    signal changeToOptions()
+    onChangeToOptions:{
+        optionsBtn.pressed = true
     }
 
     SwipeView {
@@ -54,9 +60,11 @@ ApplicationWindow {
         currentIndex: swipeView.currentIndex
         
         TabButton {
+            id:optionsBtn
             text: qsTr("Options")            
         }
         TabButton {
+            id:timerBtn
             text: qsTr("Timer")            
         }
     }   
@@ -77,8 +85,6 @@ ApplicationWindow {
         // Test model
     Model_QML{
         id: pyModel
-        //nameAG: text1.text  
-        //ulyssesPID: text2.text        
     }    
 
     // Here we take the result of sum or subtracting numbers

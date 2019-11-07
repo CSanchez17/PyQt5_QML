@@ -14,7 +14,7 @@ class Interactor:
       self.hm = pyHook.HookManager()
       self.clickedVectorIn = []
       self.lastIndex = len(self.clickedVectorIn)
-      self.interactionSpeed = 0.5
+      self.interactionSpeed = 1
       
    def add(self, a, b):
       """This program adds two
@@ -58,18 +58,19 @@ class Interactor:
          y_position = i_rows[1]
          print(i_rows)
 
+         pa.moveTo(x_position, y_position)
          if(i_rows[i_EventID] == "Left") : 
             # left click
-            pa.leftClick(x_position, y_position, duration= self.interactionSpeed)
+            pa.leftClick(x_position, y_position)
          
          if(i_rows[i_EventID] == "Right") : 
             # right click
-            pa.rightClick(x_position, y_position, duration= self.interactionSpeed)         
+            pa.rightClick(x_position, y_position)         
          
          if(i_rows[i_EventID] == "Return") :
             # enter pressed
             #pa.moveTo(x_position, y_position, duration= 1) 
-            pa.click(x_position, y_position, duration= self.interactionSpeed)
+            pa.click(x_position, y_position)
             pa.write(textInput)
             pa.press('enter')     
                   

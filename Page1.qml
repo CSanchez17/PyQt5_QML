@@ -3,6 +3,8 @@ import QtQuick.Controls 2.5
 import QtQuick.Controls.Styles 1.4
 
 Page {
+    id: page1
+    property var messageBack : window.messageBackground
 
     Rectangle{
         id: borderMargin
@@ -20,9 +22,9 @@ Page {
         Text {
             id: txtBackground
             text: messageBackground
-            anchors.horizontalCenter: borderMargin.horizontalCenter
-            anchors.top: inputBoxs.bottom
-            anchors.topMargin : 15
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 30
             wrapMode: Text.WordWrap
         }
@@ -263,12 +265,5 @@ Page {
             }
         }
     }
-
-/*
-    Label {
-        text: qsTr("You are on Page 1.")
-        anchors.centerIn: parent
-    }
-*/
 
 }
