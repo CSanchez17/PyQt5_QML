@@ -8,11 +8,12 @@ from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
 #from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
-import sys, time, json
+import sys, time, os
 
 import interaction
 import processInfo as manager
 import timer
+import configManager
 #import Model
 
 ################ my model ################
@@ -24,6 +25,7 @@ class Model(QObject):
 
         # Initialise the value of the properties.
         self._nameAG = ''
+        self._projectsPath = os.getcwd() + "\Projects"
         self._shoeSize = 0
         self._clickedList = []
         self._ulyssesPID = 0
@@ -32,10 +34,21 @@ class Model(QObject):
         self._currTime = timer.getTheCurrentTime()
         self._lastPerformDate = ""
 
+        self.createFolder(self._projectsPath)
+        
+
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
     # Otherwise it will not be possible to get it up in QML
     sumResult = pyqtSignal(int, arguments=['sum'])      
+  
+    @pyqtProperty('QString')
+    def projectsPath(self):
+        return self._projectsPath
+        
+    @projectsPath.setter
+    def projectsPath(self, projectsPath):
+        self._projectsPath = projectsPath       
   
     @pyqtProperty('QString')
     def currTime(self):
@@ -85,16 +98,8 @@ class Model(QObject):
     @shoeSize.setter
     def shoeSize(self, shoeSize):
         self._shoeSize = shoeSize
-
     # ------------------------------------------------- #
     # ------------------------------------------------- #
-    @pyqtProperty(int, int)
-    def clickedList(self):
-        return self._clickedList
-
-    @clickedList.setter
-    def clickedList(self, clickedList):
-        self._clickedList = clickedList
 
     # Slot for summing two numbers
     @pyqtSlot(int, int)
@@ -120,7 +125,7 @@ class Model(QObject):
     @pyqtSlot(str)
     def performAction(self, textInput = 0):
         print("Py: Performing action ...")
-        self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG)
+        self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath)
         print("Py: Action performed.")
 
     # Slot reset the position list
@@ -131,6 +136,7 @@ class Model(QObject):
         self.intac.listenKeyboardEvents()
 
     # Slot reset the position list
+    # return the lenght of the clicked list
     @pyqtSlot()
     def stopRecord(self):
         print("Py: Stop recording ...")
@@ -138,7 +144,7 @@ class Model(QObject):
         self.intac.stopListenKeyboard()
         self._clickedList = self.intac.getTheRecord()
         print("Clicks: ", len(self._clickedList))
-        print(self._clickedList)
+        return len(self._clickedList)
 
     # Slot get the pid from qml
     @pyqtSlot(str)
@@ -161,18 +167,27 @@ class Model(QObject):
 
     @pyqtSlot()
     def saveToJson(self):
-        data = {}
-        data['clicks'] = self._clickedList
-        with open('data.txt', 'w') as outfile:
-            json.dump(data,outfile)
+        configManager.saveToJson(self._clickedList)
 
     @pyqtSlot()
     def readFromJson(self):
-        with open('data.txt') as json_file:
-            data = json.load(json_file)
-            for p in data['clicks']:
-                print(p)
+        self._clickedList = configManager.readFromJson()
+        print(self._clickedList)
 
+    @pyqtSlot(result = list)
+    def getClickedList(self):
+        return self._clickedList
+
+    @pyqtSlot(list)
+    def setClickedList(self):
+        self._clickedList = list
+
+    def createFolder(self, directory):
+        try:
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+        except OSError:
+            print ('Error: Creating directory. ' +  directory)
     # ------------------------------------------------- #
 
 
@@ -180,6 +195,8 @@ def keyPressEvent(self, e):
     
     if e.key() == Qt.Key_Escape:
         self.close()
+
+    
 
 def runQML():
     app =QApplication(sys.argv)

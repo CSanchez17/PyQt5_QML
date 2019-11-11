@@ -101,6 +101,32 @@ Page {
                     console.log("pyModel.ulyssesPID: " + pyModel.ulyssesPID)
                 }
             }
+
+            //third input
+            Label {
+                id: label3
+                text: "Projects path"
+            }
+            TextInput {
+                id: text3
+                width: 500
+                text: qsTr(pyModel.projectsPath)
+                color: "gray"
+                font.pixelSize: 15
+                focus: true
+                cursorVisible: true
+
+                onTextChanged: {
+                    color = "black"
+                    pyModel.projectsPath = text3.text
+                }
+
+                Keys.onReturnPressed: {
+                    focus = false
+                    pyModel.projectsPath = text3.text
+                    console.log("pyModel.projectsPath: " + pyModel.projectsPath)
+                }
+            }
         }   
         
         states:[
@@ -131,15 +157,23 @@ Page {
                     visible: false
                 }
                 PropertyChanges{
-                    target: reset
-                    visible: false
-                }
-                PropertyChanges{
                     target: start
                     visible: false
                 }
                 PropertyChanges{
+                    target: reset
+                    visible: false
+                }
+                PropertyChanges{
                     target: close
+                    visible: false
+                }
+                PropertyChanges{
+                    target: open
+                    visible: false
+                }
+                PropertyChanges{
+                    target: save
                     visible: false
                 }
             },
@@ -187,6 +221,12 @@ Page {
       //  currentIndex: swipeView.currentIndex
         Row{      
             spacing: 10
+            ToolButton{
+                text: qsTr("Open")
+                id: open
+                onPressed: pyModel.readFromJson()
+            }
+
             ToolButton {
                 text: qsTr("Record")
                 id: stopAndRecord
@@ -196,7 +236,10 @@ Page {
                 onPressed:{            
                     if(borderMargin.state !== 'Stopped' && borderMargin.state !== ''){
                         borderMargin.state = 'Stopped'
-                        pyModel.stopRecord()
+                        pyModel.stopRecord()  
+                        var len = pyModel.getClickedList().length
+                        print("len: ", len)
+                        //if(len > 0){ start.enabled = true }
                         stopAndRecord.text= qsTr("Record")                   
                     }
                     else{
@@ -206,20 +249,21 @@ Page {
                             borderMargin.state = 'Recording' 
                             window.recordStateRequired()
                             stopAndRecord.text= qsTr("Stop") 
-                            pyModel.recordAction()  
+                            pyModel.recordAction()
                         }
                         else{
                             txtBackground.font.pixelSize = 20
                             txtBackground.text = "Please provide a valid AG number and Ulysses PID"
                         }  
                     }
-                    console.log("borderMargin.state", borderMargin.state)
+                    
                 }
             }
 
             ToolButton {
-                text: qsTr("Start")
+                text: qsTr("Test")
                 id: start
+                enabled: true
 
                 onPressed:{   
                     console.log("Start clicked")
