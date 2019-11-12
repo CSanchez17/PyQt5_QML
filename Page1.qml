@@ -29,14 +29,6 @@ Page {
             wrapMode: Text.WordWrap
         }
 
-        Keys.onEnterPressed:{
-            //perform action on python
-            //save the coordinates
-            if (textIn.text != ""){
-                pyModel.populateMousePosList(x_PosClicked,y_PosClicked, 2)
-            }
-        }
-
         //TextInput
         Column{
             id: inputBoxs
@@ -61,7 +53,7 @@ Page {
                 focus: true
                 cursorVisible: true
 
-                onTextChanged: {
+                onEditingFinished: {
                     color = "black"
                     pyModel.nameAG = text1.text
                 }
@@ -88,7 +80,7 @@ Page {
                 focus: true
                 cursorVisible: true
 
-                onTextChanged: {
+                onEditingFinished: {
                     color = "black"
                     pyModel.ulyssesPID = text2.text
                 }
@@ -107,25 +99,13 @@ Page {
                 id: label3
                 text: "Projects path"
             }
-            TextInput {
+            Text{
                 id: text3
                 width: 500
                 text: qsTr(pyModel.projectsPath)
-                color: "gray"
+                color: "black"
                 font.pixelSize: 15
-                focus: true
-                cursorVisible: true
-
-                onTextChanged: {
-                    color = "black"
-                    pyModel.projectsPath = text3.text
-                }
-
-                Keys.onReturnPressed: {
-                    focus = false
-                    pyModel.projectsPath = text3.text
-                    console.log("pyModel.projectsPath: " + pyModel.projectsPath)
-                }
+                wrapMode: Text.WordWrap
             }
         }   
         

@@ -33,9 +33,11 @@ class Model(QObject):
         self._timer = timer.Timer()
         self._currTime = timer.getTheCurrentTime()
         self._lastPerformDate = ""
-
-        self.createFolder(self._projectsPath)
-        
+        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
+        self._counterFiles = 0
+          
+        self.createFolder(self._projectsPath)  
+                
 
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
@@ -48,7 +50,7 @@ class Model(QObject):
         
     @projectsPath.setter
     def projectsPath(self, projectsPath):
-        self._projectsPath = projectsPath       
+        self._projectsPath = projectsPath
   
     @pyqtProperty('QString')
     def currTime(self):
@@ -78,7 +80,6 @@ class Model(QObject):
     def lastPerformDate(self, lastPerformDate):
         self._lastPerformDate = lastPerformDate
 
-    #--------------
     @pyqtProperty('QString')
     def nameAG(self):
         return self._nameAG
@@ -86,7 +87,13 @@ class Model(QObject):
     # Define the setter of the 'name' property.
     @nameAG.setter
     def nameAG(self, nameAG):
+        print("setter")
         self._nameAG = nameAG
+        self._projectsPath = self._projectsPath + "\\" + str(self._nameAG)
+        self.createFolder(self._projectsPath)
+        print(self._nameAG)  
+        print(self._projectsPath)
+        print(self._nameOfExcelTable)
 
     # Define the getter of the 'shoeSize' property.  The C++ type and
     # Python type of the property is int.
@@ -123,11 +130,14 @@ class Model(QObject):
 
     # Slot reset the position list
     @pyqtSlot(str)
-    def performAction(self, textInput = 0):
-        print("Py: Performing action ...")
-        self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath)
-        print("Py: Action performed.")
+    def performAction(self, textInput = 0): 
 
+        self._counterFiles += 1
+        print(self._nameOfExcelTable)
+        print("Py: Performing action ...")
+        self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
+        self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath, self._nameOfExcelTable)
+        
     # Slot reset the position list
     @pyqtSlot()
     def recordAction(self):
@@ -188,6 +198,7 @@ class Model(QObject):
                 os.makedirs(directory)
         except OSError:
             print ('Error: Creating directory. ' +  directory)
+        
     # ------------------------------------------------- #
 
 

@@ -5,12 +5,12 @@ import pyautogui as pa
 import pyHook
 import pythoncom
 import datetime
-import time
-
+import time, os
 
 class Interactor:
    def __init__(self):
-      self.name = "name"
+      self._counterFiles = 0
+      self._nameAG = ''
       self.age = "age"
       # create a hook manager
       self.hm = pyHook.HookManager()
@@ -24,10 +24,11 @@ class Interactor:
       result = a + b
       return result
 
-   def performMouseMovement(self, mousePosList, textInput = "", textInput2 = ""):  
+   def performMouseMovement(self, mousePosList, textInput = "", textInput2 = "", nameOfExcelTable = ""):  
       i_EventID = 2  # column 2 for Event ID
       index = 0
-      counterEnterKey = 0
+      counterEnterKey = 0      
+
       for i_rows in mousePosList:
          x_position = i_rows[0]
          y_position = i_rows[1]
@@ -42,7 +43,7 @@ class Interactor:
             # right click
             pa.rightClick(x_position, y_position)
 
-         if(i_rows[i_EventID] == "Back") : 
+         if(i_rows[i_EventID] == "Delete") : 
             # Back
             pa.click(x_position, y_position)
             pa.keyDown('delete')
@@ -52,28 +53,39 @@ class Interactor:
             #pa.moveTo(x_position, y_position, duration= 1) 
             pa.click(x_position, y_position)
 
-            if(counterEnterKey == 0):
+            if(counterEnterKey == 0):               
+               pa.keyDown('delete')
                pa.write(textInput)
+               pa.press('enter')
+               self.pause(6)
             if(counterEnterKey == 1):
-               pa.doubleClick(x_position, y_position)
+               #pa.click(x_position, y_position)              
+               pa.keyDown('delete')
                pa.write(textInput2)
-               
-            pa.press('enter')
-            self.pause()
+               pa.press('enter')
+               self.pause(2)
+            if(counterEnterKey == 2):
+               pa.click(x_position, y_position)             
+               pa.keyDown('delete')
+               pa.write(nameOfExcelTable)
+               pa.press('enter')
+               self.pause(2)
+
             counterEnterKey += 1
          
          if(i_rows[i_EventID] == "Space"):
-            self.pause()
+            self.pause(6)
                   
          index = index + 1
       
       currentDT = datetime.datetime.now()    
       print(currentDT)
+
+      print("Py: Action performed.")
       return currentDT.strftime("%d.%m.%Y %H:%M")
 
-   def pause(self):
-      time.sleep(6)   #4 seconds
-
+   def pause(self, seconds):
+      time.sleep(seconds)   #4 seconds
 
    def OnKeyboardEvent(self, event):
 
@@ -96,22 +108,21 @@ class Interactor:
       if(event.Key == "Space"): 
          self.lastIndex = len(self.clickedVectorIn) - 1
          self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Space"])
-      if(event.Key == "Back"):
+      if(event.Key == "Delete"):
          self.lastIndex = len(self.clickedVectorIn) - 1
-         self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Back"])
+         self.clickedVectorIn.append([self.clickedVectorIn[self.lastIndex][0], self.clickedVectorIn[self.lastIndex][1],"Delete"])
  
          
 
       #print(clickedVectorIn[lastIndex][0], clickedVectorIn[lastIndex][1])
       return True
 
-
    def OnMouseEvent(self, event):
-      print("OnMouseEvent")
+     # print("OnMouseEvent")
       # called when mouse events are received
       msgName =  event.MessageName
       (event_x, event_y) = event.Position  
-      print("mouse: ", event.Position )
+     # print("mouse: ", event.Position )
 
       if(msgName == "mouse left down"):
          print ('MessageName:', event.MessageName)
@@ -157,6 +168,17 @@ class Interactor:
       print("len: ", len(self.clickedVectorIn))
       self.clickedVectorIn.pop(len(self.clickedVectorIn) - 1)
       return self.clickedVectorIn
+
+   def prepareEnvironmentDirectory(self, directory, tableName):
+      self.createFolder(directory)
+
+   def createFolder(self, directory):
+      try:
+         if not os.path.exists(directory):
+               os.makedirs(directory)
+      except OSError:
+         print ('Error: Creating directory. ' +  directory)
+
 
 
 
