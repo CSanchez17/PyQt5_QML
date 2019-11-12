@@ -87,13 +87,15 @@ class Model(QObject):
     # Define the setter of the 'name' property.
     @nameAG.setter
     def nameAG(self, nameAG):
-        print("setter")
-        self._nameAG = nameAG
-        self._projectsPath = self._projectsPath + "\\" + str(self._nameAG)
-        self.createFolder(self._projectsPath)
-        print(self._nameAG)  
-        print(self._projectsPath)
-        print(self._nameOfExcelTable)
+        if (self._nameAG != nameAG):
+            print("setter")
+            self._nameAG = nameAG
+            self._projectsPath = self._projectsPath + "\\" + str(self._nameAG)
+            self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
+            self.createFolder(self._projectsPath)
+            print(self._nameAG)  
+            print(self._projectsPath)
+            print(self._nameOfExcelTable)
 
     # Define the getter of the 'shoeSize' property.  The C++ type and
     # Python type of the property is int.
@@ -131,9 +133,7 @@ class Model(QObject):
     # Slot reset the position list
     @pyqtSlot(str)
     def performAction(self, textInput = 0): 
-
         self._counterFiles += 1
-        print(self._nameOfExcelTable)
         print("Py: Performing action ...")
         self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
         self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath, self._nameOfExcelTable)
@@ -160,7 +160,6 @@ class Model(QObject):
     @pyqtSlot(str)
     def setPID(self, arg1):
         manager.moveWindowToFront(arg1)
-
         
     # Slot get the set the selected date
     @pyqtSlot(str, str)
@@ -177,11 +176,20 @@ class Model(QObject):
 
     @pyqtSlot()
     def saveToJson(self):
-        configManager.saveToJson(self._clickedList)
+        self._counterFiles += 1
+        print("Py: Performing action ...")
+        self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
+        self._projectsPath = self._projectsPath + "\\" + str(self._nameAG)
+        configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._nameOfExcelTable)
 
     @pyqtSlot()
-    def readFromJson(self):
-        self._clickedList = configManager.readFromJson()
+    def readFromJson(self):        
+        data = configManager.readFromJson()        
+        self._clickedList       = data[0]
+        self._nameAG            = data[1]
+        self._projectsPath      = data[2]
+        self._ulyssesPID        = data[3]
+        self._nameOfExcelTable  = data[4]
         print(self._clickedList)
 
     @pyqtSlot(result = list)
