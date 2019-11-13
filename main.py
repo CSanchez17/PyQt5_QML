@@ -38,12 +38,25 @@ class Model(QObject):
           
         self.createFolder(self._projectsPath)  
                 
-
+    ## ------------------------------------------------------------------- ##
     # Signal sending sum
     # Necessarily give the name of the argument through arguments=['sum']
     # Otherwise it will not be possible to get it up in QML
-    sumResult = pyqtSignal(int, arguments=['sum'])      
-  
+    sumResult = pyqtSignal(int, arguments=['sum'])    
+    
+    # Slot for summing two numbers
+    @pyqtSlot(int, int)
+    def sum(self, arg1, arg2):
+        # Sum two arguments and emit a signal
+        self.sumResult.emit(arg1 + arg2)
+
+    # signal name changed
+    nameAG_Changed  =  pyqtSignal(str, arguments=['nameAG_']) 
+    # signal PID changed
+    ulyssesPID_Changed  =  pyqtSignal(str, arguments=['pid_']) 
+    
+    
+    ## ------------------------------------------------------------------- ##
     @pyqtProperty('QString')
     def projectsPath(self):
         return self._projectsPath
@@ -110,12 +123,6 @@ class Model(QObject):
     # ------------------------------------------------- #
     # ------------------------------------------------- #
 
-    # Slot for summing two numbers
-    @pyqtSlot(int, int)
-    def sum(self, arg1, arg2):
-        # Sum two arguments and emit a signal
-        self.sumResult.emit(arg1 + arg2)
-
     # Slot populate list
     @pyqtSlot(int, int, int)
     def populateMousePosList(self, arg1, arg2, arg3):
@@ -136,6 +143,9 @@ class Model(QObject):
         self._counterFiles += 1
         print("Py: Performing action ...")
         self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
+        #delete file if already exits:
+        if(os.path.exists(self._projectsPath +"\\" + self._nameOfExcelTable)):
+            os.remove(self._projectsPath +"\\" + self._nameOfExcelTable)
         self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath, self._nameOfExcelTable)
         
     # Slot reset the position list
@@ -179,18 +189,28 @@ class Model(QObject):
         self._counterFiles += 1
         print("Py: Performing action ...")
         self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
-        self._projectsPath = self._projectsPath + "\\" + str(self._nameAG)
         configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._nameOfExcelTable)
 
     @pyqtSlot()
-    def readFromJson(self):        
+    def readFromJson(self):    
+        print("readng data")    
         data = configManager.readFromJson()        
         self._clickedList       = data[0]
         self._nameAG            = data[1]
         self._projectsPath      = data[2]
         self._ulyssesPID        = data[3]
         self._nameOfExcelTable  = data[4]
+
         print(self._clickedList)
+        print(self._nameAG)
+        print(self._ulyssesPID)
+        self.nameAG_Changed.emit(self._nameAG)
+        self.ulyssesPID_Changed.emit(self._ulyssesPID)
+
+        print(self._projectsPath)
+        self.createFolder(os.getcwd() + "\Projects")
+        self.createFolder(self._projectsPath)
+        print(self._nameOfExcelTable)
 
     @pyqtSlot(result = list)
     def getClickedList(self):

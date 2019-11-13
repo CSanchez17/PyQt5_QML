@@ -10,7 +10,7 @@ def saveToJson(clickedList, nameAG, projectsPath, ulyssesPID, nameOfExcelTable):
         nameOfExcelTable
     ]
 
-    with open('data.txt', 'w') as outfile:
+    with open(nameAG + 'data.txt', 'w') as outfile:
         json.dump(data,outfile) 
 
 

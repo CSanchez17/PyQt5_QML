@@ -5,6 +5,8 @@ import QtQuick.Controls.Styles 1.4
 Page {
     id: page1
     property var messageBack : window.messageBackground
+    property alias agNumber: text1.text
+    property alias uPID: text2.text
 
     Rectangle{
         id: borderMargin

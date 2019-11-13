@@ -49,9 +49,11 @@ ApplicationWindow {
         currentIndex: tabBar.currentIndex
 
         Page1 {
+            id: page1_
         }
 
         Page2 {
+            id: page2_
         }
     }    
 
@@ -96,6 +98,14 @@ ApplicationWindow {
             // sum was set through arguments=['sum']
            // sumResult.text = sum
             console.log("sum: " + sum)
+        }
+        onNameAG_Changed:{
+            page1_.agNumber = nameAG_
+            print(page1_.agNumber)
+        }
+        onUlyssesPID_Changed:{
+            page1_.uPID = pid_
+            print(page1_.uPID)         
         }
     } 
 

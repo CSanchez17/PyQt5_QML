@@ -59,17 +59,16 @@ class Interactor:
                pa.press('enter')
                self.pause(6)
             if(counterEnterKey == 1):
-               #pa.click(x_position, y_position)              
-               pa.keyDown('delete')
-               pa.write(textInput2)
+               pa.keyDown('delete')    
+               pa.write(textInput2)    
+               print(textInput2)
                pa.press('enter')
-               self.pause(2)
-            if(counterEnterKey == 2):
-               pa.click(x_position, y_position)             
-               pa.keyDown('delete')
+            if(counterEnterKey == 2):  
+               pa.click(x_position, y_position)   
+               pa.keyDown('delete')  
                pa.write(nameOfExcelTable)
+               print(nameOfExcelTable)
                pa.press('enter')
-               self.pause(2)
 
             counterEnterKey += 1
          
