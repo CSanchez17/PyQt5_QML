@@ -34,7 +34,6 @@ class Model(QObject):
         self._currTime = timer.getTheCurrentTime()
         self._lastPerformDate = ""
         self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
-        self._counterFiles = 0
           
         self.createFolder(self._projectsPath)  
                 
@@ -140,12 +139,8 @@ class Model(QObject):
     # Slot reset the position list
     @pyqtSlot(str)
     def performAction(self, textInput = 0): 
-        self._counterFiles += 1
         print("Py: Performing action ...")
-        self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
-        #delete file if already exits:
-        if(os.path.exists(self._projectsPath +"\\" + self._nameOfExcelTable)):
-            os.remove(self._projectsPath +"\\" + self._nameOfExcelTable)
+        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
         self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath, self._nameOfExcelTable)
         
     # Slot reset the position list
@@ -186,15 +181,14 @@ class Model(QObject):
 
     @pyqtSlot()
     def saveToJson(self):
-        self._counterFiles += 1
         print("Py: Performing action ...")
-        self._nameOfExcelTable = "Table_" + str(self._counterFiles) + "_" + self._nameAG + ".xlsx"
+        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
         configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._nameOfExcelTable)
 
     @pyqtSlot()
     def readFromJson(self):    
         print("readng data")    
-        data = configManager.readFromJson()        
+        data = configManager.readFromJson(self._nameAG)        
         self._clickedList       = data[0]
         self._nameAG            = data[1]
         self._projectsPath      = data[2]

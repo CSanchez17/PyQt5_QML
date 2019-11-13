@@ -10,13 +10,13 @@ def saveToJson(clickedList, nameAG, projectsPath, ulyssesPID, nameOfExcelTable):
         nameOfExcelTable
     ]
 
-    with open(nameAG + 'data.txt', 'w') as outfile:
+    with open(nameAG + '_data.txt', 'w') as outfile:
         json.dump(data,outfile) 
 
 
-def readFromJson():
+def readFromJson(nameAG):
     data = []
-    with open('data.txt') as json_file:
+    with open(nameAG + '_data.txt') as json_file:
         data = json.load(json_file)
         #for p in data['clicks']:
         #    print(p)

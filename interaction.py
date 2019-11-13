@@ -24,7 +24,7 @@ class Interactor:
       result = a + b
       return result
 
-   def performMouseMovement(self, mousePosList, textInput = "", textInput2 = "", nameOfExcelTable = ""):  
+   def performMouseMovement(self, mousePosList, textInput = "", prjPath = "", nameOfExcelTable = ""):  
       i_EventID = 2  # column 2 for Event ID
       index = 0
       counterEnterKey = 0      
@@ -45,29 +45,37 @@ class Interactor:
 
          if(i_rows[i_EventID] == "Delete") : 
             # Back
-            pa.click(x_position, y_position)
+            #pa.click(x_position, y_position)
             pa.keyDown('delete')
 
          if(i_rows[i_EventID] == "Return") :
             # enter pressed
             #pa.moveTo(x_position, y_position, duration= 1) 
-            pa.click(x_position, y_position)
+            #pa.click(x_position, y_position)
 
-            if(counterEnterKey == 0):               
+            if(counterEnterKey == 0):                 
+               pa.click(x_position, y_position)             
                pa.keyDown('delete')
                pa.write(textInput)
                pa.press('enter')
                self.pause(6)
             if(counterEnterKey == 1):
-               pa.keyDown('delete')    
-               pa.write(textInput2)    
-               print(textInput2)
+               pa.click(x_position, y_position)
+               #self.pause(2)
+               #pa.keyDown('delete') 
+               #self.pause(2)
+               print(prjPath)
+               pa.write(prjPath) 
+               #self.pause(2)
                pa.press('enter')
-            if(counterEnterKey == 2):  
-               pa.click(x_position, y_position)   
-               pa.keyDown('delete')  
+            if(counterEnterKey == 2):              
+               pa.click(x_position, y_position)
+               self.removeExistentTable(prjPath + "\\" + nameOfExcelTable)
+               print(prjPath + "\\" + nameOfExcelTable)
+               self.pause(1)
+               pa.click(x_position, y_position)
+               pa.keyDown('delete') 
                pa.write(nameOfExcelTable)
-               print(nameOfExcelTable)
                pa.press('enter')
 
             counterEnterKey += 1
@@ -82,6 +90,11 @@ class Interactor:
 
       print("Py: Action performed.")
       return currentDT.strftime("%d.%m.%Y %H:%M")
+
+   def removeExistentTable(self, arg1):
+      #delete file if already exits:
+      if(os.path.exists(arg1)):
+         os.remove(arg1)
 
    def pause(self, seconds):
       time.sleep(seconds)   #4 seconds
