@@ -181,7 +181,6 @@ class Model(QObject):
 
     @pyqtSlot()
     def saveToJson(self):
-        print("Py: Performing action ...")
         self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
         configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._nameOfExcelTable)
 

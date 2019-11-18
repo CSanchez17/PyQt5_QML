@@ -59,23 +59,14 @@ class Interactor:
                pa.write(textInput)
                pa.press('enter')
                self.pause(6)
-            if(counterEnterKey == 1):
-               pa.click(x_position, y_position)
-               #self.pause(2)
-               #pa.keyDown('delete') 
-               #self.pause(2)
-               print(prjPath)
-               pa.write(prjPath) 
-               #self.pause(2)
-               pa.press('enter')
-            if(counterEnterKey == 2):              
+            if(counterEnterKey == 1):             
                pa.click(x_position, y_position)
                self.removeExistentTable(prjPath + "\\" + nameOfExcelTable)
                print(prjPath + "\\" + nameOfExcelTable)
                self.pause(1)
                pa.click(x_position, y_position)
                pa.keyDown('delete') 
-               pa.write(nameOfExcelTable)
+               pa.write(prjPath + "\\" + nameOfExcelTable)
                pa.press('enter')
 
             counterEnterKey += 1

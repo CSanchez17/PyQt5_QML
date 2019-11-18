@@ -10,7 +10,6 @@ class Interactor:
    def __init__(self):
       self._counterFiles = 0
       self._nameAG = ''
-      self.age = "age"
       self.clickedVectorIn = []
       self.lastIndex = len(self.clickedVectorIn)
       self.interactionSpeed = 2
@@ -50,23 +49,14 @@ class Interactor:
                pa.write(textInput)
                pa.press('enter')
                self.pause(6)
-            if(counterEnterKey == 1):
-               pa.click(x_position, y_position)
-               #self.pause(2)
-               #pa.keyDown('delete') 
-               #self.pause(2)
-               print(prjPath)
-               pa.write(prjPath) 
-               #self.pause(2)
-               pa.press('enter')
-            if(counterEnterKey == 2):              
+            if(counterEnterKey == 1):             
                pa.click(x_position, y_position)
                self.removeExistentTable(prjPath + "\\" + nameOfExcelTable)
                print(prjPath + "\\" + nameOfExcelTable)
                self.pause(1)
                pa.click(x_position, y_position)
                pa.keyDown('delete') 
-               pa.write(nameOfExcelTable)
+               pa.write(prjPath + "\\" + nameOfExcelTable)
                pa.press('enter')
 
             counterEnterKey += 1
@@ -95,6 +85,14 @@ class Interactor:
       self.clickedVectorIn.pop(len(self.clickedVectorIn) - 1)
       return self.clickedVectorIn
 
+   def readFromJson(self):
+        data = []
+        with open('instructions.json') as json_file:
+            data = json.load(json_file)
+            #for p in data['clicks']:
+            #    print(p)
+        return data
+
    def prepareEnvironmentDirectory(self):        
         print("readng data")    
         data = self.readFromJson()       
@@ -115,14 +113,6 @@ class Interactor:
 
         self.performMouseMovement(_clickedList, _nameAG, _projectsPath, _nameOfExcelTable)
 
-
-   def readFromJson(self):
-        data = []
-        with open('_data.txt') as json_file:
-            data = json.load(json_file)
-            #for p in data['clicks']:
-            #    print(p)
-        return data
 
    def createFolder(self, directory):
     try:
