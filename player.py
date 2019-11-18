@@ -108,7 +108,7 @@ class Interactor:
         print(_projectsPath)
         print(_nameOfExcelTable)
                 
-        self.createFolder(os.getcwd() + "\Projects")
+        self.createFolder(os.getcwd() + "..\Projects")
         self.createFolder(_projectsPath)
 
         self.performMouseMovement(_clickedList, _nameAG, _projectsPath, _nameOfExcelTable)

@@ -25,7 +25,7 @@ class Model(QObject):
 
         # Initialise the value of the properties.
         self._nameAG = ''
-        self._projectsPath = os.getcwd() + "\Projects"
+        self._projectsPath = os.getcwd() + "\..\Projects"
         self._shoeSize = 0
         self._clickedList = []
         self._ulyssesPID = 0
@@ -201,7 +201,7 @@ class Model(QObject):
         self.ulyssesPID_Changed.emit(self._ulyssesPID)
 
         print(self._projectsPath)
-        self.createFolder(os.getcwd() + "\Projects")
+        self.createFolder(os.getcwd() + "\..\Projects")
         self.createFolder(self._projectsPath)
         print(self._nameOfExcelTable)
 
