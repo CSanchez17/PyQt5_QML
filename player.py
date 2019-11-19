@@ -6,6 +6,16 @@ import pythoncom
 import datetime
 import time, os, json
 
+import random
+import time
+import sys
+import warnings
+warnings.simplefilter("ignore", UserWarning)
+sys.coinit_flags = 2
+from pywinauto import application
+from pywinauto.findwindows import WindowAmbiguousError, WindowNotFoundError
+
+
 class Interactor:
    def __init__(self):
       self._counterFiles = 0
@@ -43,17 +53,28 @@ class Interactor:
             #pa.moveTo(x_position, y_position, duration= 1) 
             #pa.click(x_position, y_position)
 
-            if(counterEnterKey == 0):                 
+            if(counterEnterKey == 0):       #AG group           
                pa.click(x_position, y_position)             
                pa.keyDown('delete')
                pa.write(textInput)
                pa.press('enter')
                self.pause(6)
-            if(counterEnterKey == 1):             
+            if(counterEnterKey == 1):        #Zip file 
+               print("2nd Return")    
+               self.pause(2)
+               pa.doubleClick(x_position, y_position)
+               #pa.click(x_position, y_position)
+               pa.keyDown('delete') 
+               zipName = nameOfExcelTable.replace(".xlsx", ".zip")
+               zipName = zipName.replace("Table_", "")
+               pa.write(prjPath + "\\" + zipName)
+               print(prjPath + "\\" + zipName)
+               pa.press('enter')
+            if(counterEnterKey == 2):        #Excel Table
+               self.pause(1)
                pa.click(x_position, y_position)
                self.removeExistentTable(prjPath + "\\" + nameOfExcelTable)
                print(prjPath + "\\" + nameOfExcelTable)
-               self.pause(1)
                pa.click(x_position, y_position)
                pa.keyDown('delete') 
                pa.write(prjPath + "\\" + nameOfExcelTable)
@@ -107,8 +128,10 @@ class Interactor:
         print(_ulyssesPID)
         print(_projectsPath)
         print(_nameOfExcelTable)
-                
-        self.createFolder(os.getcwd() + "..\Projects")
+
+        self.moveWindowToFront(_ulyssesPID)   
+        self.pause(1)     
+        #self.createFolder(os.getcwd() + "\..\Projects")
         self.createFolder(_projectsPath)
 
         self.performMouseMovement(_clickedList, _nameAG, _projectsPath, _nameOfExcelTable)
@@ -121,7 +144,12 @@ class Interactor:
     except OSError:
         print ('Error: Creating directory. ' +  directory)
 
-
+   # Select the PID window and bring it to the top
+   def moveWindowToFront(self,arg1):    
+      pid = int(arg1)
+      app = application.Application().connect(process=pid)
+      dlg = app.top_window().set_focus()
+      #print(dlg)
 
 actor = Interactor()
 actor.prepareEnvironmentDirectory()
