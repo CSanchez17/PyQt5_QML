@@ -62,7 +62,7 @@ class Interactor:
             if(counterEnterKey == 1):        #Zip file 
                print("2nd Return")    
                self.pause(2)
-               pa.doubleClick(x_position, y_position)
+            #   pa.doubleClick(x_position, y_position)
                #pa.click(x_position, y_position)
                pa.keyDown('delete') 
                zipName = nameOfExcelTable.replace(".xlsx", ".zip")
@@ -72,10 +72,11 @@ class Interactor:
                pa.press('enter')
             if(counterEnterKey == 2):        #Excel Table
                self.pause(1)
-               pa.click(x_position, y_position)
+            # get excel to the top ?
+            #   pa.click(x_position, y_position)
                self.removeExistentTable(prjPath + "\\" + nameOfExcelTable)
                print(prjPath + "\\" + nameOfExcelTable)
-               pa.click(x_position, y_position)
+            #   pa.click(x_position, y_position)
                pa.keyDown('delete') 
                pa.write(prjPath + "\\" + nameOfExcelTable)
                pa.press('enter')
