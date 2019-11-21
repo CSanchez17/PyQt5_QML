@@ -69,6 +69,7 @@ class Interactor:
                zipName = zipName.replace("Table_", "")
                pa.write(prjPath + "\\" + zipName)
                print(prjPath + "\\" + zipName)
+               self.removeExistentTable(prjPath + "\\" + zipName)
                pa.press('enter')
             if(counterEnterKey == 2):        #Excel Table
                self.pause(1)
