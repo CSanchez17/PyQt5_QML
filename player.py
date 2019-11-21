@@ -108,7 +108,8 @@ class Interactor:
 
    def readFromJson(self):
         data = []
-        with open('instructions.json') as json_file:
+        pahtToJson = os.getcwd() + "\instructions.json"
+        with open(pahtToJson) as json_file:
             data = json.load(json_file)
             #for p in data['clicks']:
             #    print(p)
