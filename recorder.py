@@ -9,6 +9,7 @@ from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
 from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
 
 import sys, time, os
+#from pathlib import Path
 
 import interaction
 import processInfo as manager
@@ -29,6 +30,7 @@ class Model(QObject):
         self._shoeSize = 0
         self._clickedList = []
         self._ulyssesPID = 0
+        self._excelPID = 0
         self.intac = interaction.Interactor()
         self._timer = timer.Timer()
         self._currTime = timer.getTheCurrentTime()
@@ -82,6 +84,16 @@ class Model(QObject):
     def ulyssesPID(self, ulyssesPID):
         self._ulyssesPID = ulyssesPID    
 
+    # Getter must be declared first and bevore the setter
+    @pyqtProperty('QString')
+    def excelPID(self):
+        return self._excelPID
+
+    @excelPID.setter
+    def excelPID(self, excelPID):
+        self._excelPID = excelPID   
+
+    #---------------------------------------------------------
 
     @pyqtProperty('QString')
     def lastPerformDate(self):
@@ -146,7 +158,8 @@ class Model(QObject):
     # Slot reset the position list
     @pyqtSlot()
     def recordAction(self):
-        print("Py: Recording action ...")
+        print("Py: Recording action ...")        
+        manager.moveWindowToFront(self._ulyssesPID)
         self.intac.listenMouseEvents()
         self.intac.listenKeyboardEvents()
 
@@ -182,7 +195,7 @@ class Model(QObject):
     @pyqtSlot()
     def saveToJson(self):
         self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
-        configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._nameOfExcelTable)
+        configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._excelPID, self._nameOfExcelTable)
 
     @pyqtSlot()
     def readFromJson(self):    
@@ -192,7 +205,8 @@ class Model(QObject):
         self._nameAG            = data[1]
         self._projectsPath      = data[2]
         self._ulyssesPID        = data[3]
-        self._nameOfExcelTable  = data[4]
+        self._excelPID          = data[4]
+        self._nameOfExcelTable  = data[5]
 
         print(self._clickedList)
         print(self._nameAG)

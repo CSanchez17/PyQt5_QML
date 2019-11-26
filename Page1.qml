@@ -26,7 +26,9 @@ Page {
             text: messageBackground
             anchors.left: parent.left
             anchors.leftMargin: 10
+            anchors.top: inputBoxs.bottom
             anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
             wrapMode: Text.WordWrap
         }
@@ -40,7 +42,22 @@ Page {
                 top: borderMargin.top
                 topMargin: 20
             }
-            //firs input
+
+            // Projects path 
+            Label {
+                id: label3
+                text: "Projects path"
+            }
+            Text{
+                id: text3
+                width: 500
+                text: qsTr(pyModel.projectsPath)
+                color: "black"
+                font.pixelSize: 15
+                wrapMode: Text.WordWrap
+            }
+
+            // Assembly Group Input
             Label {
                 id: label1
                 text: "Assembly Group"
@@ -67,48 +84,67 @@ Page {
                 }
             }
 
-            //second input
-            Label {
-                id: label2
-                text: "Ulysses PID"
-            }
-            TextInput {
-                id: text2
-                width: 200
-                text: qsTr("")
-                color: "gray"
-                font.pixelSize: 15
-                //font.italic: true
-                focus: true
-                cursorVisible: true
+            Row{
+                spacing: 10
+                //Ulysses PID input 
+                Label {
+                    id: label2
+                    text: "Ulysses PID"
+                }
+                TextInput {
+                    id: text2
+                    width: 200
+                    text: qsTr("")
+                    color: "gray"
+                    font.pixelSize: 15
+                    //font.italic: true
+                    focus: true
+                    cursorVisible: true
 
-                onEditingFinished: {
-                    color = "black"
-                    pyModel.ulyssesPID = text2.text
+                    onEditingFinished: {
+                        color = "black"
+                        pyModel.ulyssesPID = text2.text
+                    }
+
+                    validator: IntValidator{bottom: 4; top: 99999;}
+
+                    Keys.onReturnPressed: {
+                        focus = false
+                        pyModel.ulyssesPID = text2.text
+                        console.log("pyModel.ulyssesPID: " + pyModel.ulyssesPID)
+                    }
                 }
 
-                validator: IntValidator{bottom: 4; top: 99999;}
+                //Excel PID input
+                Label {
+                    id: label4
+                    text: "Excel PID"
+                }
+                TextInput {
+                    id: text4
+                    width: 200
+                    text: qsTr("")
+                    color: "gray"
+                    font.pixelSize: 15
+                    //font.italic: true
+                    focus: true
+                    cursorVisible: true
 
-                Keys.onReturnPressed: {
-                    focus = false
-                    pyModel.ulyssesPID = text2.text
-                    console.log("pyModel.ulyssesPID: " + pyModel.ulyssesPID)
+                    onEditingFinished: {
+                        color = "black"
+                        pyModel.excelPID = text4.text
+                    }
+
+                    validator: IntValidator{bottom: 4; top: 99999;}
+
+                    Keys.onReturnPressed: {
+                        focus = false
+                        pyModel.excelPID = text4.text
+                        console.log("pyModel.excelPID: " + pyModel.excelPID)
+                    }
                 }
             }
 
-            //third input
-            Label {
-                id: label3
-                text: "Projects path"
-            }
-            Text{
-                id: text3
-                width: 500
-                text: qsTr(pyModel.projectsPath)
-                color: "black"
-                font.pixelSize: 15
-                wrapMode: Text.WordWrap
-            }
         }   
         
         states:[
@@ -226,8 +262,10 @@ Page {
                     }
                     else{
                         
-                        if(text1.text !== "" && text2.text !== ""){                     
-                            pyModel.setPID(text2.text)                             
+                        if(text1.text !== "" && text2.text !== "" && text4.text !== ""){                     
+                            //pyModel.setPID(text2.text)  
+                            //pyModel.ulyssesPID = text2.text  
+                            //pyModel.excelPID = text4.text                         
                             borderMargin.state = 'Recording' 
                             window.recordStateRequired()
                             stopAndRecord.text= qsTr("Stop") 

@@ -4,17 +4,18 @@
 import pyautogui as pa
 import pythoncom
 import datetime
-import time, os, json
+from datetime import date
+import time, os, sys, json
 
 import random
-import time
-import sys
 import warnings
 warnings.simplefilter("ignore", UserWarning)
 sys.coinit_flags = 2
 from pywinauto import application
 from pywinauto.findwindows import WindowAmbiguousError, WindowNotFoundError
 
+import shutil #Copy files
+import win32com.client
 
 class Interactor:
    def __init__(self):
@@ -23,8 +24,10 @@ class Interactor:
       self.clickedVectorIn = []
       self.lastIndex = len(self.clickedVectorIn)
       self.interactionSpeed = 2
+      self.originalMacro = "\PO_Exporting_Auto.xlsm"
+      self.localMacro = self.originalMacro
 
-   def performMouseMovement(self, mousePosList, textInput = "", prjPath = "", nameOfExcelTable = ""):  
+   def performMouseMovement(self, mousePosList, textInput = "", prjPath = "", nameOfExcelTable = "", _excelPID =""):  
       i_EventID = 2  # column 2 for Event ID
       index = 0
       counterEnterKey = 0      
@@ -65,14 +68,17 @@ class Interactor:
             #   pa.doubleClick(x_position, y_position)
                #pa.click(x_position, y_position)
                pa.keyDown('delete') 
-               zipName = nameOfExcelTable.replace(".xlsx", ".zip")
-               zipName = zipName.replace("Table_", "")
+            #   zipName = nameOfExcelTable.replace(".xlsx", ".zip")
+            #   zipName = zipName.replace("Table_", "")
+               zipName = "Baugruppendokumente.zip"
                pa.write(prjPath + "\\" + zipName)
                print(prjPath + "\\" + zipName)
                self.removeExistentTable(prjPath + "\\" + zipName)
                pa.press('enter')
             if(counterEnterKey == 2):        #Excel Table
+               print("3nd Return, ", _excelPID)    
                self.pause(1)
+               self.moveWindowToFront(_excelPID)
             # get excel to the top ?
             #   pa.click(x_position, y_position)
                self.removeExistentTable(prjPath + "\\" + nameOfExcelTable)
@@ -117,6 +123,21 @@ class Interactor:
             #    print(p)
         return data
 
+   def copyMacroPO(self, srcPath):
+      destination = srcPath + self.originalMacro
+      print("dest: ", destination)
+      self.localMacro = shutil.copyfile("PO_Exporting_Auto.xlsm", destination)
+
+   def runMacro(self):
+      if os.path.exists(self.localMacro):
+         xl = win32com.client.Dispatch("Excel.Application")
+         wb = xl.Workbooks.Open(os.path.abspath(self.localMacro), ReadOnly=1)
+         print("Running: ", self.localMacro)
+         xl.Application.Run("PO_Exporting_Auto.xlsm!Modul1.auto_PO_Exporting")
+         wb.Close(True)
+         print("Macro done: ", datetime.datetime.now())
+         del xl
+
    def prepareEnvironmentDirectory(self):        
         print("readng data")    
         data = self.readFromJson()       
@@ -124,21 +145,35 @@ class Interactor:
         _nameAG            = data[1]
         _projectsPath      = data[2]
         _ulyssesPID        = data[3]
-        _nameOfExcelTable  = data[4]
+        _excelPID          = data[4]
+        _nameOfExcelTable  = data[5]
 
         print(_clickedList)
         print(_nameAG)
         print(_ulyssesPID)
+        print(_excelPID)
         print(_projectsPath)
         print(_nameOfExcelTable)
 
+        self.moveWindowToFront(_excelPID)  
         self.moveWindowToFront(_ulyssesPID)   
-        self.pause(1)     
+        self.pause(1)
         #self.createFolder(os.getcwd() + "\..\Projects")
         self.createFolder(_projectsPath)
+        self.copyMacroPO(_projectsPath)     
+        self.performMouseMovement(_clickedList, _nameAG, _projectsPath, _nameOfExcelTable, _excelPID)
+        self.runMacro()
+        self.cleanDirectory(_projectsPath, "\\" + _nameOfExcelTable, self.localMacro, "\Baugruppendokumente.zip", "\Baugruppendokumente")
 
-        self.performMouseMovement(_clickedList, _nameAG, _projectsPath, _nameOfExcelTable)
-
+   def cleanDirectory(self, _projectsPath, _nameOfExcelTable, localMacro, zipFile, AG_Folder):
+      os.remove(_projectsPath + _nameOfExcelTable)
+      print("Removed file: " + _projectsPath + _nameOfExcelTable)
+      os.remove(_projectsPath + zipFile)
+      print("Removed file: " + _projectsPath + zipFile)
+      os.remove(localMacro)
+      print("Removed file: " + localMacro)
+      shutil.rmtree(_projectsPath + AG_Folder, ignore_errors=True)
+      print("Removed file: " + _projectsPath + AG_Folder)
 
    def createFolder(self, directory):
     try:

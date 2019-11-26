@@ -1,12 +1,13 @@
 import json
 
-def saveToJson(clickedList, nameAG, projectsPath, ulyssesPID, nameOfExcelTable):
+def saveToJson(clickedList, nameAG, projectsPath, ulyssesPID, excelPID, nameOfExcelTable):
     
     data = [
         clickedList,
         nameAG,
         projectsPath,
         ulyssesPID,
+        excelPID,
         nameOfExcelTable
     ]
 
