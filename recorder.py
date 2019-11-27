@@ -159,6 +159,7 @@ class Model(QObject):
     @pyqtSlot()
     def recordAction(self):
         print("Py: Recording action ...")        
+        manager.moveWindowToFront(self._excelPID)
         manager.moveWindowToFront(self._ulyssesPID)
         self.intac.listenMouseEvents()
         self.intac.listenKeyboardEvents()

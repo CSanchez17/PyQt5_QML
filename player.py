@@ -163,7 +163,7 @@ class Interactor:
         self.copyMacroPO(_projectsPath)     
         self.performMouseMovement(_clickedList, _nameAG, _projectsPath, _nameOfExcelTable, _excelPID)
         self.runMacro()
-        self.cleanDirectory(_projectsPath, "\\" + _nameOfExcelTable, self.localMacro, "\Baugruppendokumente.zip", "\Baugruppendokumente")
+   #     self.cleanDirectory(_projectsPath, "\\" + _nameOfExcelTable, self.localMacro, "\Baugruppendokumente.zip", "\Baugruppendokumente")
 
    def cleanDirectory(self, _projectsPath, _nameOfExcelTable, localMacro, zipFile, AG_Folder):
       os.remove(_projectsPath + _nameOfExcelTable)
@@ -176,11 +176,17 @@ class Interactor:
       print("Removed file: " + _projectsPath + AG_Folder)
 
    def createFolder(self, directory):
-    try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-    except OSError:
-        print ('Error: Creating directory. ' +  directory)
+      try:
+         #if not os.path.exists(directory):
+         #   os.makedirs(directory)
+         if os.path.exists(directory): #remove folder if already exists            
+            print("Removed directory: ", directory)
+            shutil.rmtree(directory, ignore_errors=True)     
+                               
+         os.makedirs(directory)
+         
+      except OSError:
+         print ('Error: Creating directory. ' +  directory)
 
    # Select the PID window and bring it to the top
    def moveWindowToFront(self,arg1):    
