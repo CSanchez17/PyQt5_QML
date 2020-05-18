@@ -18,6 +18,10 @@ class Interactor:
       self.lastIndex = len(self.clickedVectorIn)
       self.interactionSpeed = 2
       
+   def moveMouseTo(self, from_, to_):
+      print("Move to: ", from_, to_)    
+      pa.moveTo(from_, to_)
+
    def add(self, a, b):
       """This program adds two
       numbers and return the result"""
@@ -100,6 +104,7 @@ class Interactor:
       print ('Ascii:', event.Ascii, chr(event.Ascii))
       print ('Key:', event.Key)
       print ('KeyID:', event.KeyID)
+      print('Click No: ', len(self.clickedVectorIn))
       #print ('ScanCode:', event.ScanCode)
       # print 'Extended:', event.Extended
       # print 'Injected:', event.Injected
@@ -127,6 +132,9 @@ class Interactor:
       (event_x, event_y) = event.Position  
      # print("mouse: ", event.Position )
 
+     
+      print('Click No: ', len(self.clickedVectorIn))
+
       if(msgName == "mouse left down"):
          print ('MessageName:', event.MessageName)
          print("x: ", event_x)
@@ -153,9 +161,6 @@ class Interactor:
       # wait forever
       #pythoncom.PumpMessages()
 
-   def stopListenEvents(self):
-      self.hm.UnhookMouse()
-
    def listenKeyboardEvents(self):
       # watch for all mouse events
       self.hm.KeyDown = self.OnKeyboardEvent
@@ -164,12 +169,16 @@ class Interactor:
       # wait forever
       #pythoncom.PumpMessages()
 
+   def stopListenEvents(self):
+      self.hm.UnhookMouse()
+
    def stopListenKeyboard(self):
       self.hm.UnhookKeyboard()
 
    def getTheRecord(self):
       print("len: ", len(self.clickedVectorIn))
-      self.clickedVectorIn.pop(len(self.clickedVectorIn) - 1)
+      if self.clickedVectorIn:
+         self.clickedVectorIn.pop(len(self.clickedVectorIn) - 1)
       return self.clickedVectorIn
 
    def prepareEnvironmentDirectory(self, directory, tableName):

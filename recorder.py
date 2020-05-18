@@ -1,20 +1,23 @@
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets, QtQml
+import os
+import sys
+import time
 
-from PyQt5.QtWidgets import (QApplication,QWidget, QLCDNumber)
-
-from PyQt5.QtQml import QQmlApplicationEngine, qmlRegisterType, QQmlComponent
+import timer
+from PyQt5 import QtCore, QtGui, QtQml, QtWidgets
 #from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QUrl, pyqtProperty, QObject, pyqtSignal, pyqtSlot
-
-import sys, time, os
-#from pathlib import Path
+from PyQt5.QtCore import QObject, Qt, QUrl, pyqtProperty, pyqtSignal, pyqtSlot
+from PyQt5.QtQml import QQmlApplicationEngine, QQmlComponent, qmlRegisterType
+from PyQt5.QtWidgets import QApplication, QLCDNumber, QWidget
 
 import interaction
 import processInfo as manager
-import timer
-import configManager
+from config import conf
+from player import actor
+
+#from pathlib import Path
+
 #import Model
 
 ################ my model ################
@@ -25,19 +28,21 @@ class Model(QObject):
         super().__init__(parent)
 
         # Initialise the value of the properties.
-        self._nameAG = ''
-        self._projectsPath = os.getcwd() + "\..\Projects"
+        self._nameAG            = ''
+        self.iUlyssesPID        = conf.iUlyssesPID
+        self.iExcelPID          = conf.iExcelPID
+        self.sProjectsPath      = conf.sOutputFolderPath
+        self.sArticlesListPath  = conf.sArticlesListFilePath
+        self.articlesList       = []
+        self.clickedList        = []
+
         self._shoeSize = 0
-        self._clickedList = []
-        self._ulyssesPID = 0
-        self._excelPID = 0
-        self.intac = interaction.Interactor()
-        self._timer = timer.Timer()
-        self._currTime = timer.getTheCurrentTime()
+        self.intac      = interaction.Interactor()
+        self._timer     = timer.Timer()
+        self._currTime  = timer.getTheCurrentTime()
         self._lastPerformDate = ""
-        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
           
-        self.createFolder(self._projectsPath)  
+        self.createFolder(self.sProjectsPath)  
                 
     ## ------------------------------------------------------------------- ##
     # Signal sending sum
@@ -55,16 +60,15 @@ class Model(QObject):
     nameAG_Changed  =  pyqtSignal(str, arguments=['nameAG_']) 
     # signal PID changed
     ulyssesPID_Changed  =  pyqtSignal(str, arguments=['pid_']) 
+    # signal PID changed
+    excelPID_Changed  =  pyqtSignal(str, arguments=['pid_']) 
     
     
     ## ------------------------------------------------------------------- ##
     @pyqtProperty('QString')
     def projectsPath(self):
-        return self._projectsPath
+        return self.sProjectsPath
         
-    @projectsPath.setter
-    def projectsPath(self, projectsPath):
-        self._projectsPath = projectsPath
   
     @pyqtProperty('QString')
     def currTime(self):
@@ -76,22 +80,26 @@ class Model(QObject):
         self._currTime = currTime    
 
     # Getter must be declared first and bevore the setter
-    @pyqtProperty('QString')
+    @pyqtProperty('int')
     def ulyssesPID(self):
-        return self._ulyssesPID
+        return self.iUlyssesPID
 
     @ulyssesPID.setter
     def ulyssesPID(self, ulyssesPID):
-        self._ulyssesPID = ulyssesPID    
+        self.iUlyssesPID = ulyssesPID    
 
     # Getter must be declared first and bevore the setter
-    @pyqtProperty('QString')
+    @pyqtProperty('int')
     def excelPID(self):
-        return self._excelPID
+        return self.iExcelPID
 
     @excelPID.setter
     def excelPID(self, excelPID):
-        self._excelPID = excelPID   
+        self.iExcelPID = excelPID   
+
+    @pyqtProperty('QString')
+    def articlesListPath(self):
+        return self.sArticlesListPath
 
     #---------------------------------------------------------
 
@@ -114,12 +122,11 @@ class Model(QObject):
         if (self._nameAG != nameAG):
             print("setter")
             self._nameAG = nameAG
-            self._projectsPath = self._projectsPath + "\\" + str(self._nameAG)
-            self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
-            self.createFolder(self._projectsPath)
+            #self.sProjectsPath = self.sProjectsPath + "/" + str(self._nameAG)
+            #self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
+            self.createFolder(self.sProjectsPath)
             print(self._nameAG)  
-            print(self._projectsPath)
-            print(self._nameOfExcelTable)
+            print(self.sProjectsPath)
 
     # Define the getter of the 'shoeSize' property.  The C++ type and
     # Python type of the property is int.
@@ -137,32 +144,46 @@ class Model(QObject):
     # Slot populate list
     @pyqtSlot(int, int, int)
     def populateMousePosList(self, arg1, arg2, arg3):
-        self._clickedList.append([arg1, arg2, arg3])
-        print(self._clickedList)
+        self.clickedList.append([arg1, arg2, arg3])
+        print(self.clickedList)
 
     # Slot reset the position list
     @pyqtSlot()
     def resetMousePosList(self):
-        self._clickedList.clear()
+        self.clickedList.clear()
         self.intac.clickedVectorIn.clear()
         print("clicked vector reseted")
-        print(self._clickedList)
+        print(self.clickedList)
 
     # Slot reset the position list
     @pyqtSlot(str)
     def performAction(self, textInput = 0): 
         print("Py: Performing action ...")
-        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
-        self._lastPerformDate = self.intac.performMouseMovement(self._clickedList, self._nameAG, self._projectsPath, self._nameOfExcelTable)
+        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"    
+        self._lastPerformDate = actor.performMouseMovement(self.sProjectsPath, self.clickedList,
+                                                        self.articlesList, self.iUlyssesPID, self.iExcelPID)
         
     # Slot reset the position list
     @pyqtSlot()
     def recordAction(self):
-        print("Py: Recording action ...")        
-        manager.moveWindowToFront(self._excelPID)
-        manager.moveWindowToFront(self._ulyssesPID)
-        self.intac.listenMouseEvents()
-        self.intac.listenKeyboardEvents()
+        print("Py: Recording action ...")  
+
+        try:
+            manager.moveWindowToFront(self.iExcelPID)
+            manager.moveWindowToFront(self.iUlyssesPID)
+
+            if len(self.clickedList) == 0:
+                self.intac.moveMouseTo(1000, 1000) 
+            else:
+                self.intac.moveMouseTo(self.clickedList[0][0], self.clickedList[0][1]) 
+
+        except manager.application.ProcessNotFoundError:
+            print("Programm PID nicht gefunden!")
+
+        finally:
+            self.intac.listenMouseEvents()
+            self.intac.listenKeyboardEvents()
+
 
     # Slot reset the position list
     # return the lenght of the clicked list
@@ -171,9 +192,9 @@ class Model(QObject):
         print("Py: Stop recording ...")
         self.intac.stopListenEvents()
         self.intac.stopListenKeyboard()
-        self._clickedList = self.intac.getTheRecord()
-        print("Clicks: ", len(self._clickedList))
-        return len(self._clickedList)
+        self.clickedList = self.intac.getTheRecord()
+        print("Clicks: ", len(self.clickedList))
+        return len(self.clickedList)
 
     # Slot get the pid from qml
     @pyqtSlot(str)
@@ -195,38 +216,38 @@ class Model(QObject):
 
     @pyqtSlot()
     def saveToJson(self):
-        self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
-        configManager.saveToJson(self._clickedList, self._nameAG, self._projectsPath, self._ulyssesPID, self._excelPID, self._nameOfExcelTable)
+        conf.saveToJson(self.clickedList)
+        #self._nameOfExcelTable = "Table_" + self._nameAG + ".xlsx"
+        #configManager.saveToJson(self.clickedList, self._nameAG, self.sProjectsPath, self.iUlyssesPID, self.iExcelPID, self._nameOfExcelTable)
 
     @pyqtSlot()
     def readFromJson(self):    
         print("readng data")    
-        data = configManager.readFromJson(self._nameAG)        
-        self._clickedList       = data[0]
-        self._nameAG            = data[1]
-        self._projectsPath      = data[2]
-        self._ulyssesPID        = data[3]
-        self._excelPID          = data[4]
-        self._nameOfExcelTable  = data[5]
+        data = conf.readFromJson()        
+        self.clickedList    = data[0]
+        self.articlesList   = data[1]
+        self.iUlyssesPID    = data[2]
+        self.iExcelPID      = data[3]
 
-        print(self._clickedList)
+        print(self.clickedList)
         print(self._nameAG)
-        print(self._ulyssesPID)
+        print(self.iUlyssesPID)
+        print(self.iExcelPID)
         self.nameAG_Changed.emit(self._nameAG)
-        self.ulyssesPID_Changed.emit(self._ulyssesPID)
+        self.excelPID_Changed.emit(self.iExcelPID)
+        self.ulyssesPID_Changed.emit(self.iUlyssesPID)
 
-        print(self._projectsPath)
-        self.createFolder(os.getcwd() + "\..\Projects")
-        self.createFolder(self._projectsPath)
-        print(self._nameOfExcelTable)
+        print(self.sProjectsPath)
+        self.createFolder(os.getcwd() + "/../Projects")
+        self.createFolder(self.sProjectsPath)
 
     @pyqtSlot(result = list)
     def getClickedList(self):
-        return self._clickedList
+        return self.clickedList
 
     @pyqtSlot(list)
     def setClickedList(self):
-        self._clickedList = list
+        self.clickedList = list
 
     def createFolder(self, directory):
         try:
@@ -256,9 +277,9 @@ def runQML():
 
     # Create a component factory and load the QML script.
     component = QQmlComponent(engine)
-    component.loadUrl(QUrl('Model.qml'))
+    component.loadUrl(QUrl('res/Model.qml'))
     
-    engine.load('main.qml')
+    engine.load('res/main.qml')
 
     # Create an instance of the component.
     model = component.create()
@@ -266,13 +287,14 @@ def runQML():
     ##test
     screen_resolution = app.desktop().screenGeometry()
     width, height = screen_resolution.width(), screen_resolution.height()
-    print("width: %d" % width) 
-    print("height: %d" % height)
+    #print("width: %d" % width) 
+    #print("height: %d" % height)
 
     if model is not None:
         # Print the value of the properties.
         print("The AG name is %s." % model.nameAG)
         print("The Ulysses PID is %s." % model.ulyssesPID)
+        print("The Excel PID is %s." % model.excelPID)
     else:
         # Print all errors that occurred.
         for error in component.errors():
